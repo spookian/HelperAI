@@ -22,8 +22,8 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 
 	if (target == player)
 	{
-		targetLoc = (void(*)(void*))(0x804eda9c)(target);
-		// be easily interrupted
+		targetLoc = (void(*)(void*))(0x804eda9c)(target); //hero location function
+		
 		//809ed0e8 has enemy manager pointer????
 		//r27 has all managers?
 		for (int i = 0; i < enemyManager[36]; i++) //loop through enemy table to check which one's the closest
@@ -49,13 +49,23 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 	}
 	else
 	{
-		for (int i = 0; i < enemyManager[36]; i++)
+		bool stillHere = false;
+		for (int j = 0; j < enemyManager[36]; j++)
 		{
-			
+			void* enemy = (void(*)(int*,int))(0x803773C4)(somethingEnemy, j);
+			if (target == enemy) stillHere = true;
 		}
 
 		//check if enemy still exists and if not relock onto main character
-		self->flags |= AI_TARGET_ENEMY;
+		if (stillHere)
+		{
+			self->flags |= AI_TARGET_ENEMY;
+		}
+		else 
+		{
+			self->target = player;
+			targetLoc = (void(*)(void*))(0x804eda9c)(player);
+		}
 	}
 
 	//chase
@@ -91,7 +101,7 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 void _start()
 {
 	helperLHook();
-	helperFollow(null, null);
+	helperFollow(null, null); // i haven't figured out how to get the compiler to compile these functions without adding them to my start function
 }
 
 noheader void helperLHook()

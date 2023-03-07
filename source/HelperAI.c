@@ -3,14 +3,44 @@
 int* fpointer = -1;
 int* spointer = -1;
 int* tpointer = -1;
-//table of pointers point
+//table of pointers point to 
 
-noheader void helperInputHook_Normal() //hooks into first
+noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero3HidFv
 {
-	register unsigned int *reg3 asm("r3");
-	register unsigned int *reg0 asm("r0");
+	register unsigned int *reg28 asm("r28"); // holds input
+	register unsigned int *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
+	//0x0 of player gets used in GKI_getfirst, result can be used for heromanager
 	
-	
+	int* firstPlayer = (**(int**)reg30)[50];
+	int* temp = firstPlayer + 41;
+	firstPlayer = firstPlayer[40];
+	// i got this horrific line of code from following the pointer trail in heroManager_Q33
+	//40 is 0xA0 / 4
+	//0x9C of heromanager struct is number of characters, 0xA0 of heroManager struct is start of character struct
+
+	if (*reg30 != firstPlayer)
+	{
+		int numPlayer = 0;
+		for (int i = 0; i < 3; i++)
+		{
+			if (*(temp + i) == *reg30) 
+			{
+				numPlayer = i;
+				break;
+			}
+			
+		}
+		int* dataSection = RTDL_END_MEMORY;
+		dataSection += numPlayer;
+		if (dataSection != -1)
+		{
+			reg30[1] = *(helperAI_t**)dataSection->vpad;
+		}
+	}
+	else
+	{
+		reg30[1] = reg28; 
+	}
 	return;
 }
 
@@ -68,7 +98,11 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 		for (int j = 0; j < enemyManager[36]; j++)
 		{
 			void* enemy = (void(*)(int*,int))(0x803773C4)(somethingEnemy, j);
-			if (target == enemy) stillHere = true;
+			if (target == enemy)
+			{
+				stillHere = true;
+				break;
+			}
 		}
 
 		//check if enemy still exists and if not relock onto main character

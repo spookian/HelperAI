@@ -8,26 +8,39 @@ int* tpointer = -1;
 
 // all returns will be replaced with branch statements in editing
 
-noheader void helperDelete()
+noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 {
+	register uint32_t *reg28 asm("r28");
+	register uint32_t *reg04 asm("r4");
+	register uint32_t *reg03 asm("r3");
 	
+	uint32_t* helperPointer = (uint32_t*)RTDL_END_MEMORY + (uint32_t)reg28;
+	if (*helperPointer != -1)
+	{
+		RTDL_DELETEOP();
+	}
+	return;
 }
 
-noheader void helperCreate() - hooks into 804ef168
+noheader void helperCreate() // - hooks into 804ef168
 {
-	register unsigned int *reg03 asm("r3");
-	register unsigned char *reg31 asm("r31");
-	register unsigned int *reg04 asm("r4");
+	register uint32_t *reg03 asm("r3");
+	register uint8_t *reg31 asm("r31");
+	register uint32_t *reg04 asm("r4");
 
-	int heroNumber = *(unsigned int*)(reg31 + 0x3C);
-	RTDL_NEWOP(sizeof(helperAI_t));
+	int heroNumber = *(uint32_t*)(reg31 + 0x3C);
+	uint32_t* firstPlayer = reg03[40];
+	helperAI_t* newBuddy = RTDL_NEWOP(sizeof(helperAI_t));
+	newBuddy->charID = heroNumber;
+	newBuddy->target = (void*)firstPlayer;
+	
 	return;
 }
 
 noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero3HidFv
 {
-	register unsigned int *reg28 asm("r28"); // holds input
-	register unsigned int *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
+	register uint32_t *reg28 asm("r28"); // holds input
+	register uint32_t *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
 	//0x0 of player gets used in GKI_getfirst, result can be used for heromanager, which adds 200 to the pointer and dereferences it
 	
 	int* firstPlayer = (**(int**)reg30)[50];
@@ -74,9 +87,9 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 
 noheader void helperLoopHook() // hooks into procBegin heromanager - 804f5588
 {
-	register unsigned int *reg03 asm("r3");	 //contains table to heroes
-	register unsigned int *reg28 asm("r28"); //contains hero pointer, used after hook
-	register unsigned int *reg29 asm("r29"); //contains counter
+	register uint32_t *reg03 asm("r3");	 //contains table to heroes
+	register uint32_t *reg28 asm("r28"); //contains hero pointer, used after hook
+	register uint32_t *reg29 asm("r29"); //contains counter
 	if (reg29 > 0)
 	{
 		helperAI_t* helperPtr = *((uint32_t**)RTDL_END_MEMORY + (uint32_t)reg29); // pointer arithmetic don't fail me now
@@ -88,25 +101,25 @@ noheader void helperLoopHook() // hooks into procBegin heromanager - 804f5588
 }
 
 
-//this will play at the start of 
+//don't edit return
 void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be an entity with a move struct
 {
 	self->flags = 0;
 	self->vpad &= !HID_BUTTON_1;
 
-	register unsigned int *reg27 asm("r27");
+	register uint32_t *reg27 asm("r27");
 	float* targetLoc = NULL;
 	void* player = *heroTable; //start of character table is first player
 	void* charPtr = ((uint32_t*)heroTable + self->charID);
-	float* helperLoc = (void(*)(void*))(0x804eda9c)(charPtr);
-	//location_q43scn4step4hero function
+	float* helperLoc = RTDL_HEROLOCATION(charPtr);
+	
 
-	int* enemyManager = (void(*)(int*))(0x8023f330)(reg27);
+	int* enemyManager = RTDL_ENEMYMANAGER(reg27);
 	int* somethingEnemy = (int*)((uint32_t)enemyManager + 144);
 
 	if (target == player)
 	{
-		targetLoc = (void(*)(void*))(0x804eda9c)(target); //hero location function
+		targetLoc = RTDL_HEROLOCATION(target); //hero location function
 		
 		//809ed0e8 has enemy manager pointer????
 		//r27 has all managers?
@@ -185,7 +198,7 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 		if (triHyp <= 1.3) self->vpad |= HID_BUTTON_1;
 		//what was i thinking hypotenuse IS length
 	}
-	
+	return;
 }
 // later iterations of this code will call from a table of function pointers corresponding to the ability id the helper has to further define the behavior of the helper
  

@@ -20,7 +20,7 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 
 	if (*reg30 != firstPlayer)
 	{
-		int numPlayer = 0;
+		int numPlayer = -1;
 		for (int i = 0; i < 3; i++)
 		{
 			if (*(temp + i) == *reg30) 
@@ -32,15 +32,17 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 		}
 		int* dataSection = RTDL_END_MEMORY;
 		dataSection += numPlayer;
-		if (dataSection != -1)
+		if (dataSection != -1 && numPlayer != -1)
 		{
-			reg30[1] = *(helperAI_t**)dataSection->vpad;
+			reg30[1] = (*(helperAI_t**)dataSection)->vpad;
+			return;
+			//THIS IS A FUCKING POINTER TO THE INJECTED DATA SECTION BECAUSE I CAN'T EVEN ACCESS IT PROPERLY
+			//FUCK I HAD TO ANTICIPATE THE LOCATION OF DATA ANNDD DO ARITHMETIC TO REACH IT
+			// I AM GOING TO KILL MY SELF 
 		}
 	}
-	else
-	{
-		reg30[1] = reg28; 
-	}
+
+	reg30[1] = reg28; 
 	return;
 }
 
@@ -143,8 +145,8 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 		float triHyp = (float()(float))(0x800fe170)(triPytha); //dubious syntax
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
-		float length = triHyp / triOpp;
-		if (length <= 1.3) self->vpad |= HID_BUTTON_1;
+		if (triHyp <= 1.3) self->vpad |= HID_BUTTON_1;
+		//what was i thinking hypotenuse IS length
 	}
 	
 }

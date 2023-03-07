@@ -14,10 +14,10 @@ noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 	register uint32_t *reg04 asm("r4");
 	register uint32_t *reg03 asm("r3");
 	
-	uint32_t* helperPointer = (uint32_t*)RTDL_END_MEMORY + (uint32_t)reg28;
-	if (*helperPointer != -1)
+	uint32_t* helperPointer = *((uint32_t**)RTDL_END_MEMORY + (uint32_t)reg28);
+	if (helperPointer != -1)
 	{
-		RTDL_DELETEOP();
+		RTDL_DELETEOP(helperPointer);
 	}
 	return;
 }
@@ -30,6 +30,7 @@ noheader void helperCreate() // - hooks into 804ef168
 
 	int heroNumber = *(uint32_t*)(reg31 + 0x3C);
 	uint32_t* firstPlayer = reg03[40];
+
 	helperAI_t* newBuddy = RTDL_NEWOP(sizeof(helperAI_t));
 	newBuddy->charID = heroNumber;
 	newBuddy->target = (void*)firstPlayer;
@@ -43,7 +44,7 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 	register uint32_t *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
 	//0x0 of player gets used in GKI_getfirst, result can be used for heromanager, which adds 200 to the pointer and dereferences it
 	
-	int* firstPlayer = (**(int**)reg30)[50];
+	int* firstPlayer = (**(int***)reg30)[50];
 	int* temp = firstPlayer + 41;
 	firstPlayer = firstPlayer[40];
 	// i got this horrific line of code from following the pointer trail in heroManager_Q33
@@ -108,7 +109,7 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 	self->vpad &= !HID_BUTTON_1;
 
 	register uint32_t *reg27 asm("r27");
-	float* targetLoc = NULL;
+	float* targetLoc = 0;
 	void* player = *heroTable; //start of character table is first player
 	void* charPtr = ((uint32_t*)heroTable + self->charID);
 	float* helperLoc = RTDL_HEROLOCATION(charPtr);
@@ -125,13 +126,13 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 		//r27 has all managers?
 		for (int i = 0; i < enemyManager[36]; i++) //loop through enemy table to check which one's the closest
 		{
-			void* enemy = (void(*)(int*,int))(0x803773C4)(somethingEnemy, i);
+			void* enemy = ((void*(*)(int*,int))0x803773C4)(somethingEnemy, i);
 			// __vc__Q33hel6common41MutableArray<PQ43scn4step5enemy5Enemy,20>FUl. first arg is the aforementioned pointer and the second arg is the enemy you want to pick
 
-			float* enemyLoc = (void(*)(void*))(0x80375e8c)(enemy);
+			float* enemyLoc = ((float*(*)(void*))0x80375e8c)(enemy);
 			//80375e8c - location__Q43scn4step5enemy5EnemyCFv 
 
-			if (ABS(enemyLoc[0] - helperLoc[0]) < ABS(targetLoc[0] - helperLoc[0]))
+			if (RTDL_ABS(enemyLoc[0] - helperLoc[0]) < RTDL_ABS(targetLoc[0] - helperLoc[0]))
 			{
 				self->target = enemy;
 				targetLoc = enemyLoc;
@@ -149,7 +150,7 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 		bool stillHere = false;
 		for (int j = 0; j < enemyManager[36]; j++)
 		{
-			void* enemy = (void(*)(int*,int))(0x803773C4)(somethingEnemy, j);
+			void* enemy = ((void*(*)(int*,int))0x803773C4)(somethingEnemy, j);
 			if (target == enemy)
 			{
 				stillHere = true;
@@ -165,7 +166,7 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 		else 
 		{
 			self->target = player;
-			targetLoc = (void(*)(void*))(0x804eda9c)(player);
+			targetLoc = ((float*(*)(void*))0x804eda9c)(player);
 		}
 	}
 
@@ -189,10 +190,10 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
 	//check for states
 	if (self->flags & AI_TARGET_ENEMY)
 	{
-		float triAdj = ABS(targetLoc[0] - helperLoc[0]);
-		float triOpp = ABS(targetLoc[1] - helperLoc[1]);
+		float triAdj = targetLoc[0] - helperLoc[0];
+		float triOpp = targetLoc[1] - helperLoc[1];
 		float triPytha = (triAdj * triAdj) + (triOpp * triOpp);
-		float triHyp = (float()(float))(0x800fe170)(triPytha); //dubious syntax
+		float triHyp = RTDL_SQRT(triPytha); //dubious syntax
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
 		if (triHyp <= 1.3) self->vpad |= HID_BUTTON_1;
@@ -204,6 +205,9 @@ void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be
  
 void _start()
 {
-	helperLHook();
-	helperFollow(null, null); // i haven't figured out how to get the compiler to compile these functions without adding them to my start function
+	helperDelete();
+	helperCreate();
+	helperInputHook();
+	helperLoopHook();
+	helperLoop(0, 0, 0); // i haven't figured out how to get the compiler to compile these functions without adding them to my start function
 }

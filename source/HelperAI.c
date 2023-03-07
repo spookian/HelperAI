@@ -3,12 +3,13 @@
 int* fpointer = -1;
 int* spointer = -1;
 int* tpointer = -1;
+//table of pointers point
 
 //this will play at the start of 
 void helperLoop(helperAI_t* self, void* target) //has to be an entity with a move struct
 {
 	self->flags = 0;
-	self->vpad &= !WPAD_BUTTON_1;
+	self->vpad &= !HID_BUTTON_1;
 
 	register unsigned int *reg27 asm("r27");
 	float* targetLoc = NULL;
@@ -71,18 +72,18 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 	//chase
 	if (targetLoc[0] - 0.8 > helperLoc[0])
 	{
-		self->vpad |= WPAD_BUTTON_RIGHT
+		self->vpad |= HID_BUTTON_RIGHT
 	}
 	else if (targetLoc[0] + 0.8 < helperLoc[0])
 	{
-		self->vpad |= WPAD_BUTTON_LEFT
+		self->vpad |= HID_BUTTON_LEFT
 	}
 	else
 	{
-		self->vpad &= !(WPAD_BUTTON_LEFT | WPAD_BUTTON_RIGHT);
+		self->vpad &= !(HID_BUTTON_LEFT | HID_BUTTON_RIGHT);
 	}
 
-	if (targetLoc[1] - 0.8 > helperLoc[1]) self-> vpad |= WPAD_BUTTON_2;
+	if (targetLoc[1] - 0.8 > helperLoc[1]) self-> vpad |= HID_BUTTON_2;
 	//check for states
 	if (self->flags & AI_TARGET_ENEMY)
 	{
@@ -93,11 +94,12 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
 		float length = triHyp / triOpp;
-		if (length <= 1.3) self->vpad |= WPAD_BUTTON_1;
+		if (length <= 1.3) self->vpad |= HID_BUTTON_1;
 	}
 	
 }
-
+// later iterations of this code will call from a table of function pointers corresponding to the ability id the helper has to further define the behavior of the helper
+ 
 void _start()
 {
 	helperLHook();

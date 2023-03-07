@@ -1,16 +1,11 @@
-#define WPAD_BUTTON_2							0x0001
-#define WPAD_BUTTON_1							0x0002
-#define WPAD_BUTTON_B							0x0004
-#define WPAD_BUTTON_A							0x0008
-#define WPAD_BUTTON_MINUS						0x0010
-#define WPAD_BUTTON_HOME						0x0080
-#define WPAD_BUTTON_LEFT						0x0100
-#define WPAD_BUTTON_RIGHT						0x0200
-#define WPAD_BUTTON_DOWN						0x0400
-#define WPAD_BUTTON_UP							0x0800
-#define WPAD_BUTTON_PLUS						0x1000
+#define HID_BUTTON_LEFT		0x0001
+#define HID_BUTTON_RIGHT	0x0002
+#define HID_BUTTON_DOWN		0x0004
+#define HID_BUTTON_UP		0x0008
+#define HID_BUTTON_2		0x0010
+#define HID_BUTTON_1		0x0020
 
-#define AI_TARGET_ENEMY 						0x0001
+#define AI_TARGET_ENEMY 	0x0001
 
 #define ABS(A) ((A) & 0x7FFFFFFF)
 #define false 0
@@ -23,11 +18,10 @@ typedef char bool;
 typedef struct helperAI_s
 {
 	uint32_t charID;
-	voidptr charTable;
-	voidptr enemyTable;
-
 	voidptr target;
-	uint32_t flags;
+
+	uint16_t timer;
+	uint16_t flags;
 	uint32_t vpad;
 } helperAI_t;
 

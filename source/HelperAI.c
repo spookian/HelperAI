@@ -1,15 +1,34 @@
 #include <HelperAI.h>
+#include <RTDLMacros.h>
 
 int* fpointer = -1;
 int* spointer = -1;
 int* tpointer = -1;
 //table of pointers point to 
 
+// all returns will be replaced with branch statements in editing
+
+noheader void helperDelete()
+{
+	
+}
+
+noheader void helperCreate() - hooks into 804ef168
+{
+	register unsigned int *reg03 asm("r3");
+	register unsigned char *reg31 asm("r31");
+	register unsigned int *reg04 asm("r4");
+
+	int heroNumber = *(unsigned int*)(reg31 + 0x3C);
+	RTDL_NEWOP(sizeof(helperAI_t));
+	return;
+}
+
 noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero3HidFv
 {
 	register unsigned int *reg28 asm("r28"); // holds input
 	register unsigned int *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
-	//0x0 of player gets used in GKI_getfirst, result can be used for heromanager
+	//0x0 of player gets used in GKI_getfirst, result can be used for heromanager, which adds 200 to the pointer and dereferences it
 	
 	int* firstPlayer = (**(int**)reg30)[50];
 	int* temp = firstPlayer + 41;
@@ -39,6 +58,13 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 			//THIS IS A FUCKING POINTER TO THE INJECTED DATA SECTION BECAUSE I CAN'T EVEN ACCESS IT PROPERLY
 			//FUCK I HAD TO ANTICIPATE THE LOCATION OF DATA ANNDD DO ARITHMETIC TO REACH IT
 			// I AM GOING TO KILL MY SELF 
+			
+			// note to self: try and see if i can patch instructions using golem and patch instructions reaching into data section
+		}
+		else
+		{
+			reg30[1] = 0;
+			return;
 		}
 	}
 
@@ -46,21 +72,32 @@ noheader void helperInputHook() //hooks into 804ee6c0 - update__Q43scn4step4hero
 	return;
 }
 
-noheader void helperLHook()
+noheader void helperLoopHook() // hooks into procBegin heromanager - 804f5588
 {
+	register unsigned int *reg03 asm("r3");	 //contains table to heroes
+	register unsigned int *reg28 asm("r28"); //contains hero pointer, used after hook
+	register unsigned int *reg29 asm("r29"); //contains counter
+	if (reg29 > 0)
+	{
+		helperAI_t* helperPtr = *((uint32_t**)RTDL_END_MEMORY + (uint32_t)reg29); // pointer arithmetic don't fail me now
+		if (helperPtr != -1) helperLoop(helperPtr, helperPtr->target, reg03);
+	}
+	
+	reg03 = reg28; // going back to initial 
 	return;
 }
 
+
 //this will play at the start of 
-void helperLoop(helperAI_t* self, void* target) //has to be an entity with a move struct
+void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable) //has to be an entity with a move struct
 {
 	self->flags = 0;
 	self->vpad &= !HID_BUTTON_1;
 
 	register unsigned int *reg27 asm("r27");
 	float* targetLoc = NULL;
-	void* player = self->charTable; //start of character table is first player
-	void* charPtr = ((uint32_t*)self->char + self->charID);
+	void* player = *heroTable; //start of character table is first player
+	void* charPtr = ((uint32_t*)heroTable + self->charID);
 	float* helperLoc = (void(*)(void*))(0x804eda9c)(charPtr);
 	//location_q43scn4step4hero function
 

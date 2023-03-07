@@ -25,12 +25,15 @@ typedef char bool;
 typedef struct helperAI_s
 {
 	uint32_t charID;
-	voidptr target;
+	void* target;
 
 	uint16_t timer;
 	uint16_t flags;
 	uint32_t vpad;
 } helperAI_t;
 
-noheader void helperLHook();
-void helperLoop(helperAI_t* self, void* target);
+noheader void helperInputHook();
+noheader void helperLoopHook();
+noheader void helperConstruct();
+noheader void helperDelete();
+void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable);

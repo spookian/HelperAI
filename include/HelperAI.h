@@ -1,3 +1,8 @@
+//Esoteric things
+#define RTDL_END_MEMORY 0x808D120C //end of vanilla memory
+#define noheader __attribute__((naked))
+
+//Input things
 #define HID_BUTTON_LEFT		0x0001
 #define HID_BUTTON_RIGHT	0x0002
 #define HID_BUTTON_DOWN		0x0004
@@ -5,8 +10,10 @@
 #define HID_BUTTON_2		0x0010
 #define HID_BUTTON_1		0x0020
 
+//AI flag things
 #define AI_TARGET_ENEMY 	0x0001
 
+//Compiler things
 #define ABS(A) ((A) & 0x7FFFFFFF)
 #define false 0
 #define true 1

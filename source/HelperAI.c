@@ -5,6 +5,20 @@ int* spointer = -1;
 int* tpointer = -1;
 //table of pointers point
 
+noheader void helperInputHook_Normal() //hooks into first
+{
+	register unsigned int *reg3 asm("r3");
+	register unsigned int *reg0 asm("r0");
+	
+	
+	return;
+}
+
+noheader void helperLHook()
+{
+	return;
+}
+
 //this will play at the start of 
 void helperLoop(helperAI_t* self, void* target) //has to be an entity with a move struct
 {
@@ -72,11 +86,13 @@ void helperLoop(helperAI_t* self, void* target) //has to be an entity with a mov
 	//chase
 	if (targetLoc[0] - 0.8 > helperLoc[0])
 	{
-		self->vpad |= HID_BUTTON_RIGHT
+		self->vpad |= HID_BUTTON_RIGHT;
+		self->vpad &= !HID_BUTTON_LEFT;
 	}
 	else if (targetLoc[0] + 0.8 < helperLoc[0])
 	{
-		self->vpad |= HID_BUTTON_LEFT
+		self->vpad |= HID_BUTTON_LEFT;
+		self->vpad &= !HID_BUTTON_RIGHT;
 	}
 	else
 	{
@@ -104,9 +120,4 @@ void _start()
 {
 	helperLHook();
 	helperFollow(null, null); // i haven't figured out how to get the compiler to compile these functions without adding them to my start function
-}
-
-noheader void helperLHook()
-{
-	
 }

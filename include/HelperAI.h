@@ -13,6 +13,8 @@
 //AI flag things
 #define AI_TARGET_ENEMY 	0x0001
 
+#define AI_DISTANCE_FOLLOW	1.7f
+
 //Compiler things
 #define ABS(A) ((A) & 0x7FFFFFFF)
 #define false 0
@@ -29,11 +31,12 @@ typedef struct helperAI_s
 
 	uint16_t timer;
 	uint16_t flags;
-	uint32_t vpad;
+	uint32_t vpad_fp;
+	uint32_t vpad_sp;
+	uint32_t vpad_held;
 } helperAI_t;
 
 noheader void helperInputHook();
-noheader void helperLoopHook();
-noheader void helperConstruct();
 noheader void helperDelete();
-void helperLoop(helperAI_t* self, void* target, uint32_t* heroTable);
+helperAI_t* helperConstructor(int heroNumber);
+void helperLoop(helperAI_t* self, uint32_t* heroTable);

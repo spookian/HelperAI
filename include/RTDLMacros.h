@@ -6,3 +6,4 @@
 #define RTDL_ENEMYMANAGER 	((void*(*)(int*))0x8023f330)
 #define RTDL_SQRT		((float(*)(float))0x800fe170)
 #define RTDL_ABS		((float(*)(float))0x80387a58)
+#define RTDL_ENEMYLOCATION	((float*(*)(void*))0x80375e8c)

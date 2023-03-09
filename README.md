@@ -4,7 +4,9 @@ Work-in-progress AI partner modification for Kirby's Return to Dreamland.
 ## Dependancies
 
 [Python 3.6 or above](https://www.python.org/)
+
 [CMake](https://cmake.org/)
+
 [Golem](https://github.com/spookian/Golem)
 
 ## Compilation

@@ -13,7 +13,8 @@ Work-in-progress AI partner modification for Kirby's Return to Dreamland.
 
 Place a vanilla main.dol and a compiled version of the Golem program into the root of the cloned repository.
 
-```cmake .
+```
+cmake .
 cmake --build .
 ```
 
@@ -24,7 +25,8 @@ If all goes well, there should be a main_new.dol generated.
 Finally, add the main_new.dol file to a RtDL copy of your choice, and rename it back to main.dol.
 At the moment, the mod has not been finalized yet, so please use this supplied Gecko code to hook into the game.
 
-```044f7fe8 483d9230
+```
+044f7fe8 483d9230
 048d1298 4BC26D54
 044ee6bc 483E2BE0
 048d1470 4BC1D258

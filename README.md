@@ -1,7 +1,7 @@
 # HelperAI
 Work-in-progress AI partner modification for Kirby's Return to Dreamland.
 
-## Dependancies
+## Dependencies
 
 [Python 3.6 or above](https://www.python.org/)
 

@@ -1,3 +1,0 @@
-C:\devkitPro\devkitPPC\bin\powerpc-eabi-gcc -g -O0 -Wall -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -fomit-frame-pointer -I .\include -c .\source\HelperAI.c -o .\source\HelperAI.o
-C:\devkitPro\devkitPPC\bin\powerpc-eabi-gcc.exe -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -nodefaultlibs -nostartfiles -Wl,-Map=.\source\HelperAI.map,--gc-sections .\source\HelperAI.o -o .\source\HelperAI.elf
-C:\devkitPro\tools\bin\elf2dol.exe .\source\HelperAI.elf .\source\HelperAI.dol

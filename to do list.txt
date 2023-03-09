@@ -6,10 +6,6 @@ create gecko hooks to and from the following:
 helperDelete 	804f7fe8 -> 808d1218 -> 0x3D923C -> 	483D923C (instruction)
 		808d1288 -> 804f7fec -> 0xFFC26D54 -> 	4BC26D54
 
-helperCreate 	804ef168 -> 808d128c -> 0x3E2134 ->	483E2134
-		808d1324 -> 804ef16c -> 0xFFC1DE48 ->	4BC1DE48
-
 (recalculate after compilation)
-helperInputHook	804ee6bc -> 808d1338 -> 0x3E2C7C -> 	483E2C7C
-		808d150c -> 804ee6c8 -> 0xFFC1D1BC ->	4BC1D1BC
+helperInputHook	
 (refactor in progress)

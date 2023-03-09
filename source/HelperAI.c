@@ -19,7 +19,6 @@ noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 	{
 		RTDL_DELETEOP(*(void**)helperPointer);
 		*helperPointer = -1;
-		
 	}
 	return;
 }
@@ -81,7 +80,10 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity with a move struct
 {
 	self->flags = 0;
-
+	
+	uint32_t magicword = 0x3fd9999a;	// 3.3f but im bypassing the compiler LMFAO
+	
+	
 	uint32_t held_button = 0;
 	uint32_t fpress_button = 0;
 	uint32_t spress_button = 0;
@@ -141,6 +143,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		{
 			enemyTarget = 1;
 			targetLoc = RTDL_ENEMYLOCATION(self->target);
+			
 		}
 		else 
 		{
@@ -150,16 +153,24 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	}
 
 	//chase
-	if (targetLoc[0] - AI_DISTANCE_FOLLOW > helperLoc[0])
+	if (targetLoc[0] - *(float*)(&magicword) > helperLoc[0])
 	{
 		held_button = HID_BUTTON_RIGHT;
 	}
-	else if (targetLoc[0] + AI_DISTANCE_FOLLOW < helperLoc[0])
+	else if (targetLoc[0] + *(float*)(&magicword) < helperLoc[0])
 	{
 		held_button = HID_BUTTON_LEFT;
 	}
 
-	if (targetLoc[1] - AI_DISTANCE_FOLLOW > helperLoc[1]) held_button |= HID_BUTTON_2;
+	if (targetLoc[1] - *(float*)(&magicword) > helperLoc[1])
+	{
+		fpress_button |= HID_BUTTON_2;
+		held_button |= HID_BUTTON_2;
+	}
+	else if (targetLoc[1] + *(float*)(&magicword) < helperLoc[1])
+	{
+		held_button |= HID_BUTTON_DOWN;
+	}
 	//check for states
 	if (enemyTarget)
 	{
@@ -169,7 +180,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		float triHyp = RTDL_SQRT(triPytha); //dubious syntax
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
-		if (triHyp <= AI_DISTANCE_FOLLOW) fpress_button |= HID_BUTTON_1;
+		if (triHyp <= *(float*)(&magicword)) spress_button |= HID_BUTTON_1;
 		//what was i thinking hypotenuse IS length
 	}
 

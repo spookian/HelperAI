@@ -13,7 +13,7 @@
 //AI flag things
 #define AI_TARGET_ENEMY 	0x0001
 
-#define AI_DISTANCE_FOLLOW	1.7f
+#define AI_DISTANCE_FOLLOW	3.3f
 
 //Compiler things
 #define ABS(A) ((A) & 0x7FFFFFFF)

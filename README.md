@@ -31,7 +31,8 @@ At the moment, the mod has not been finalized yet, so please use this supplied G
 048d1298 4BC26D54
 044ee6bc 483E2BE0
 048d1470 4BC1D258
-```
+```  
+(Omit the first two lines for a more stable experience)
 
 ## Usage
 

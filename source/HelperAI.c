@@ -81,7 +81,8 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 {
 	self->flags = 0;
 	
-	uint32_t magicword = 0x3fd9999a;	// 3.3f but im bypassing the compiler LMFAO
+	uint32_t magicword = 0x3fd9999a;	// 1.7f but im bypassing the compiler LMFAO
+	uint32_t left_behind = 0x40900000;
 	
 	
 	uint32_t held_button = 0;
@@ -94,7 +95,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	void* charPtr = *((uint32_t*)heroTable + self->charID);
 	float* helperLoc = RTDL_HEROLOCATION(charPtr);
 	
-	int* enemyManager = *(int**)player;
+	int* enemyManager = *(int**)player; //0x0 of the player object leads to whatever gki_getfirst gives you. this can be passed into enemy manager
 	enemyManager = (int*)RTDL_ENEMYMANAGER(enemyManager);
 	int* somethingEnemy = (int*)((uint32_t)enemyManager + 144);
 
@@ -108,6 +109,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		for (int i = 0; i < enemyManager[36]; i++) //loop through enemy table to check which one's the closest
 		{
 			void* enemy = ((void*(*)(int*,int))0x803773C4)(somethingEnemy, i);
+			enemy = *(void**)enemy;
 			// __vc__Q33hel6common41MutableArray<PQ43scn4step5enemy5Enemy,20>FUl. first arg is the aforementioned pointer and the second arg is the enemy you want to pick
 
 			float* enemyLoc = RTDL_ENEMYLOCATION(enemy);
@@ -117,7 +119,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 			{
 				self->target = enemy;
 				targetLoc = enemyLoc;
-
+				magicword = 0x3f8ccccd;
 				enemyTarget = 1;
 			}
 		}
@@ -131,6 +133,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		for (int j = 0; j < enemyManager[36]; j++)
 		{
 			void* enemy = ((void*(*)(int*,int))0x803773C4)(somethingEnemy, j);
+			enemy = *(void**)enemy;
 			if (self->target == enemy)
 			{
 				stillHere = true;
@@ -143,7 +146,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		{
 			enemyTarget = 1;
 			targetLoc = RTDL_ENEMYLOCATION(self->target);
-			
+			magicword = 0x3f8ccccd;
 		}
 		else 
 		{
@@ -156,10 +159,12 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	if (targetLoc[0] - *(float*)(&magicword) > helperLoc[0])
 	{
 		held_button = HID_BUTTON_RIGHT;
+		if (targetLoc[0] - *(float*)(&left_behind) > helperLoc[0]) spress_button = HID_BUTTON_RIGHT;
 	}
 	else if (targetLoc[0] + *(float*)(&magicword) < helperLoc[0])
 	{
 		held_button = HID_BUTTON_LEFT;
+		if (targetLoc[0] + *(float*)(&left_behind) < helperLoc[0]) spress_button = HID_BUTTON_LEFT;
 	}
 
 	if (targetLoc[1] - *(float*)(&magicword) > helperLoc[1])
@@ -167,7 +172,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		fpress_button |= HID_BUTTON_2;
 		held_button |= HID_BUTTON_2;
 	}
-	else if (targetLoc[1] + *(float*)(&magicword) < helperLoc[1])
+	else if ((targetLoc[1] + *(float*)(&magicword) < helperLoc[1]) && !enemyTarget) //add ifAir call later
 	{
 		held_button |= HID_BUTTON_DOWN;
 	}
@@ -180,7 +185,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		float triHyp = RTDL_SQRT(triPytha); //dubious syntax
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
-		if (triHyp <= *(float*)(&magicword)) spress_button |= HID_BUTTON_1;
+		if (triHyp <= *(float*)(&magicword)) fpress_button |= HID_BUTTON_1;
 		//what was i thinking hypotenuse IS length
 	}
 

@@ -18,9 +18,8 @@ add_custom_target(Help ALL)
 add_custom_command(
 	TARGET Help 
 	COMMAND ${DKP_C_COMP} -g -O0 -Wall -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -fomit-frame-pointer -I ./include/ -c ./source/HelperAI.c -o ./build/Helper.o
-	COMMAND ${DKP_C_COMP} -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -nodefaultlibs -nostartfiles -Wl,--gc-sections ./build/Helper.o -o ./build/Helper.elf
+	COMMAND ${DKP_C_COMP} -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -nodefaultlibs -nostartfiles -T execute.ld ./build/Helper.o -o ./build/Helper.elf
 	COMMAND ${DKP_DOL_TOOL} ./build/Helper.elf ./build/Helper.dol
-	COMMAND python quickpatcher.py
 	COMMAND ${GOLEM_PATCHER} ./build/Helper.dol
 )
 

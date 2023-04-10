@@ -1,0 +1,12 @@
+CMakeCache.txt
+research.txt
+todo.txt
+Makefile
+*.arc
+*.brlyt
+*.py
+cmake_install.cmake
+
+build/
+CMakeFiles/
+C

@@ -1,11 +1,13 @@
 #include <HelperAI.h>
 #include <RTDLMacros.h>
+#include <Hook/OperatorNewDelete.h>
 
-int fpointer = -1;
-int spointer = -1;
-int tpointer = -1;
-//table of pointers point to 
+int fpointer = 0xFFFFFFFF;
+int spointer = 0xFFFFFFFF;
+int tpointer = 0xFFFFFFFF;
 
+const char cpuString[] = {0x00, 'C', 0x00, 'P', 0x00, 'U', 0x00, 0x00}; 
+//widechar string to substitute in lyt
 // all returns will be replaced with branch statements in editing
 
 noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
@@ -14,7 +16,8 @@ noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 	register uint32_t *reg04 asm("r4");
 	register uint32_t *reg03 asm("r3");
 	
-	uint32_t* helperPointer = ((uint32_t*)RTDL_END_MEMORY + (uint32_t)reg28);
+	//uint32_t* helperPointer = ((uint32_t*)RTDL_END_MEMORY + (uint32_t)reg28);
+	uint32_t* helperPointer = fpointer;
 	if (helperPointer != -1)
 	{
 		RTDL_DELETEOP(*(void**)helperPointer);
@@ -64,10 +67,6 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 		reg30[2] = (*(helperAI_t**)dataSection)->vpad_fp;
 		reg30[3] = (*(helperAI_t**)dataSection)->vpad_sp;
 		return;
-		//THIS IS A FUCKING POINTER TO THE INJECTED DATA SECTION BECAUSE I CAN'T EVEN ACCESS IT PROPERLY
-		//FUCK I HAD TO ANTICIPATE THE LOCATION OF DATA ANNDD DO ARITHMETIC TO REACH IT
-		// I AM GOING TO KILL MY SELF 
-		
 		// note to self: try and see if i can patch instructions using golem and patch instructions reaching into data section
 	}
 	reg30[1] = reg31; //held
@@ -159,12 +158,12 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	if (targetLoc[0] - *(float*)(&magicword) > helperLoc[0])
 	{
 		held_button = HID_BUTTON_RIGHT;
-		if (targetLoc[0] - *(float*)(&left_behind) > helperLoc[0]) spress_button = HID_BUTTON_RIGHT;
+		if (targetLoc[0] - *(float*)(&left_behind) > helperLoc[0]) fpress_button = HID_BUTTON_RIGHT;
 	}
 	else if (targetLoc[0] + *(float*)(&magicword) < helperLoc[0])
 	{
 		held_button = HID_BUTTON_LEFT;
-		if (targetLoc[0] + *(float*)(&left_behind) < helperLoc[0]) spress_button = HID_BUTTON_LEFT;
+		if (targetLoc[0] + *(float*)(&left_behind) < helperLoc[0]) fpress_button = HID_BUTTON_LEFT;
 	}
 
 	if (targetLoc[1] - *(float*)(&magicword) > helperLoc[1])
@@ -207,12 +206,4 @@ helperAI_t* helperConstructor(int heroNumber)
 	result->vpad_sp = 0;
 	result->vpad_held = 0;
 	return result;
-}
-
-void _start()
-{
-	helperDelete();
-	helperInputHook();
-	helperLoop(0, 0); // i haven't figured out how to get the compiler to compile these functions without adding them to my start function
-	helperConstructor(0);
 }

@@ -5,6 +5,9 @@ Makefile
 *.arc
 *.brlyt
 *.py
+*.brlan
+*.o
+*.elf
 cmake_install.cmake
 
 build/

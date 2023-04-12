@@ -1,6 +1,7 @@
 "__nw__FUI" = 0x801cc8bc;
 "__dl__FPv" = 0x801cc8c0;
 "__start_RTDL" = 0x80006310;
+"AbsF32__Q33hel4math4MathFf" = 0x80387a58;
 
 ENTRY(__start_RTDL)
 

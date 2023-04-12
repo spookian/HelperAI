@@ -1,6 +1,7 @@
 #include <HelperAI.h>
 #include <RTDLMacros.h>
-//#include <Hook/OperatorNewDelete.h>
+#include <Hook/OperatorNewDelete.h>
+#include <Hook/Math.h>
 
 int padding = 0xFFFFFFFF;
 int fpointer = 0xFFFFFFFF;
@@ -11,7 +12,8 @@ const char cpuString[] = {0x00, 'C', 0x00, 'P', 0x00, 'U', 0x00, 0x00};
 //widechar string to substitute in lyt
 
 const float helperDetectDistance = 1.7f;
-const float helperRunDistance = 4.5f;
+const float helperDetectEnemy 	 = 1.1f;
+const float helperRunDistance 	 = 4.5f;
 
 // all returns will be replaced with branch statements in editing
 extern void __start_RTDL();
@@ -22,7 +24,7 @@ noheader void __GOLEM_HOOK_START()
 	*(uint32_t*)(0x804ee6bc) = hIH_branch;
 	
 	uint32_t hIH_ret = (uint32_t)helperLoop - 4;
-	hIH_branch = (0x804ee6c0 - hIH_ret) & 0x03FFFFFF;
+	hIH_branch = (0x804ee6c8 - hIH_ret) & 0x03FFFFFF;
 	hIH_branch += 0x48000000;
 	*(uint32_t*)(hIH_ret) = hIH_branch;
 	asm("b __start_RTDL");
@@ -130,7 +132,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 			float* enemyLoc = RTDL_ENEMYLOCATION(enemy);
 			//80375e8c - location__Q43scn4step5enemy5EnemyCFv 
 
-			if (RTDL_ABS(enemyLoc[0] - helperLoc[0]) < RTDL_ABS(targetLoc[0] - helperLoc[0]))
+			if (AbsF32__Q33hel4math4MathFf(enemyLoc[0] - helperLoc[0]) < AbsF32__Q33hel4math4MathFf(targetLoc[0] - helperLoc[0]))
 			{
 				self->target = enemy;
 				targetLoc = enemyLoc;
@@ -192,14 +194,15 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	//check for states
 	if (enemyTarget)
 	{
-		float triAdj = targetLoc[0] - helperLoc[0];
-		float triOpp = targetLoc[1] - helperLoc[1];
-		float triPytha = (triAdj * triAdj) + (triOpp * triOpp);
-		float triHyp = RTDL_SQRT(triPytha); //dubious syntax
-		//800fe170 - FrSqrt__Q24nw4r4mathFf
-
-		if (triHyp <= helperDetectDistance) fpress_button |= HID_BUTTON_1;
-		//what was i thinking hypotenuse IS length
+		float diffX = targetLoc[0] - helperLoc[0];
+		float diffY = targetLoc[1] - helperLoc[1];
+		if (AbsF32__Q33hel4math4MathFf(diffX) <= helperDetectDistance)
+		{
+			if (AbsF32__Q33hel4math4MathFf(diffY) <= 1.0)
+			{
+				fpress_button |= HID_BUTTON_1;
+			}
+		}
 	}
 
 	self->vpad_held = held_button;

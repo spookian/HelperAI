@@ -21,6 +21,7 @@ add_custom_command(
 	COMMAND ${DKP_C_COMP} -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -nodefaultlibs -nostartfiles -T execute.ld ./build/Helper.o -o ./build/Helper.elf
 	COMMAND ${DKP_DOL_TOOL} ./build/Helper.elf ./build/Helper.dol
 	COMMAND ${GOLEM_PATCHER} ./build/Helper.dol
+	COMMAND python quickpatcher.py
 )
 
 file(MAKE_DIRECTORY ./build)

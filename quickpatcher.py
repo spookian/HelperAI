@@ -1,17 +1,9 @@
-patch1 = b'\x00\x0C'
-patch2 = b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF'
+patch = b'\x80\x8D\x12\x0C'
 
-file = "./build/Helper.dol"
+file = "main_new.dol"
 fileHandler = open(file, "rb+")
-fileHandler.seek(0xAE)
-fileHandler.write(patch1)
-
-fileHandler.seek(0x1C)
-stroffset = fileHandler.read(4)
-offset = int.from_bytes(stroffset, "big")
-fileHandler.seek(offset)
-fileHandler.write(patch2)
-
+fileHandler.seek(0xE0)
+fileHandler.write(patch)
 fileHandler.close()
 
 

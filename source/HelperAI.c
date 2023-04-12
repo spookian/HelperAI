@@ -1,14 +1,34 @@
 #include <HelperAI.h>
 #include <RTDLMacros.h>
-#include <Hook/OperatorNewDelete.h>
+//#include <Hook/OperatorNewDelete.h>
 
+int padding = 0xFFFFFFFF;
 int fpointer = 0xFFFFFFFF;
 int spointer = 0xFFFFFFFF;
 int tpointer = 0xFFFFFFFF;
 
 const char cpuString[] = {0x00, 'C', 0x00, 'P', 0x00, 'U', 0x00, 0x00}; 
 //widechar string to substitute in lyt
+
+const float helperDetectDistance = 1.7f;
+const float helperRunDistance = 4.5f;
+
 // all returns will be replaced with branch statements in editing
+extern void __start_RTDL();
+
+noheader void __GOLEM_HOOK_START()
+{
+	uint32_t hIH_branch = 0x48000000 + ((uint32_t)helperInputHook - 0x804ee6bc);
+	*(uint32_t*)(0x804ee6bc) = hIH_branch;
+	
+	uint32_t hIH_ret = (uint32_t)helperLoop - 4;
+	hIH_branch = (0x804ee6c0 - hIH_ret) & 0x03FFFFFF;
+	hIH_branch += 0x48000000;
+	*(uint32_t*)(hIH_ret) = hIH_branch;
+	asm("b __start_RTDL");
+	
+	return;
+}
 
 noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 {
@@ -17,11 +37,11 @@ noheader void helperDelete() // - hooks into 804f7fe8 - removeHeroIn__Q43
 	register uint32_t *reg03 asm("r3");
 	
 	//uint32_t* helperPointer = ((uint32_t*)RTDL_END_MEMORY + (uint32_t)reg28);
-	uint32_t* helperPointer = fpointer;
+	uint32_t* helperPointer = (int*)&padding[reg28];
 	if (helperPointer != -1)
 	{
-		RTDL_DELETEOP(*(void**)helperPointer);
-		*helperPointer = -1;
+		//__dl__FPv((void*)helperPointer);
+		helperPointer = -1;
 	}
 	return;
 }
@@ -47,25 +67,25 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 
 	if (*reg30 != firstPlayer)
 	{
-		int numPlayer = -1;
+		int numPlayer = 0;
 		for (int i = 0; i < 3; i++)
 		{
-			if (*(temp + i) == *reg30) 
+			if (temp[i] == *reg30) 
 			{
 				numPlayer = i;
 				break;
 			}
 			
 		}
-		int* dataSection = RTDL_END_MEMORY;
-		dataSection += (numPlayer - 1);
-		
-		if (numPlayer > 0 && *dataSection == -1) *dataSection = (uint32_t)helperConstructor(numPlayer);	// if helper is not created yet, create one
-		helperLoop(*dataSection, temp);
+		int* dataSection = &padding;
+		if (numPlayer > 0 && dataSection[numPlayer]  == -1) dataSection[numPlayer] = (uint32_t)helperConstructor(numPlayer);	// if helper is not created yet, create one
+		helperAI_t* aiObj = dataSection[numPlayer];
 
-		reg30[1] = (*(helperAI_t**)dataSection)->vpad_held;
-		reg30[2] = (*(helperAI_t**)dataSection)->vpad_fp;
-		reg30[3] = (*(helperAI_t**)dataSection)->vpad_sp;
+		helperLoop(aiObj, temp);
+
+		reg30[1] = aiObj->vpad_held;
+		reg30[2] = aiObj->vpad_fp;
+		reg30[3] = aiObj->vpad_sp;
 		return;
 		// note to self: try and see if i can patch instructions using golem and patch instructions reaching into data section
 	}
@@ -79,10 +99,6 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity with a move struct
 {
 	self->flags = 0;
-	
-	uint32_t magicword = 0x3fd9999a;	// 1.7f but im bypassing the compiler LMFAO
-	uint32_t left_behind = 0x40900000;
-	
 	
 	uint32_t held_button = 0;
 	uint32_t fpress_button = 0;
@@ -118,7 +134,6 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 			{
 				self->target = enemy;
 				targetLoc = enemyLoc;
-				magicword = 0x3f8ccccd;
 				enemyTarget = 1;
 			}
 		}
@@ -145,7 +160,6 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		{
 			enemyTarget = 1;
 			targetLoc = RTDL_ENEMYLOCATION(self->target);
-			magicword = 0x3f8ccccd;
 		}
 		else 
 		{
@@ -155,23 +169,23 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	}
 
 	//chase
-	if (targetLoc[0] - *(float*)(&magicword) > helperLoc[0])
+	if (targetLoc[0] - helperDetectDistance > helperLoc[0])
 	{
 		held_button = HID_BUTTON_RIGHT;
-		if (targetLoc[0] - *(float*)(&left_behind) > helperLoc[0]) fpress_button = HID_BUTTON_RIGHT;
+		if (targetLoc[0] - helperRunDistance > helperLoc[0]) fpress_button = HID_BUTTON_RIGHT;
 	}
-	else if (targetLoc[0] + *(float*)(&magicword) < helperLoc[0])
+	else if (targetLoc[0] + helperDetectDistance < helperLoc[0])
 	{
 		held_button = HID_BUTTON_LEFT;
-		if (targetLoc[0] + *(float*)(&left_behind) < helperLoc[0]) fpress_button = HID_BUTTON_LEFT;
+		if (targetLoc[0] + helperRunDistance < helperLoc[0]) fpress_button = HID_BUTTON_LEFT;
 	}
 
-	if (targetLoc[1] - *(float*)(&magicword) > helperLoc[1])
+	if (targetLoc[1] - helperDetectDistance > helperLoc[1])
 	{
 		fpress_button |= HID_BUTTON_2;
 		held_button |= HID_BUTTON_2;
 	}
-	else if ((targetLoc[1] + *(float*)(&magicword) < helperLoc[1]) && !enemyTarget) //add ifAir call later
+	else if ((targetLoc[1] + helperDetectDistance < helperLoc[1]) && !enemyTarget) //add ifAir call later
 	{
 		held_button |= HID_BUTTON_DOWN;
 	}
@@ -184,7 +198,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		float triHyp = RTDL_SQRT(triPytha); //dubious syntax
 		//800fe170 - FrSqrt__Q24nw4r4mathFf
 
-		if (triHyp <= *(float*)(&magicword)) fpress_button |= HID_BUTTON_1;
+		if (triHyp <= helperDetectDistance) fpress_button |= HID_BUTTON_1;
 		//what was i thinking hypotenuse IS length
 	}
 

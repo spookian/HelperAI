@@ -8,8 +8,9 @@ Makefile
 *.brlan
 *.o
 *.elf
+*.exe
+*.dol
 cmake_install.cmake
 
 build/
 CMakeFiles/
-C

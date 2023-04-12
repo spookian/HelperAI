@@ -3,7 +3,7 @@
 "__start_RTDL" = 0x80006310;
 "AbsF32__Q33hel4math4MathFf" = 0x80387a58;
 
-ENTRY(__start_RTDL)
+ENTRY(__GOLEM_HOOK_START)
 
 OUTPUT_FORMAT("elf32-powerpc", "elf32-powerpc",
 	      "elf32-powerpc")

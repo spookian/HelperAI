@@ -13,10 +13,7 @@
 //AI flag things
 #define AI_TARGET_ENEMY 	0x0001
 
-#define AI_DISTANCE_FOLLOW	3.3f
-
 //Compiler things
-#define ABS(A) ((A) & 0x7FFFFFFF)
 #define false 0
 #define true 1
 typedef unsigned char uint8_t;

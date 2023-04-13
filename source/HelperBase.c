@@ -18,47 +18,29 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 	register uint32_t *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
 	register uint32_t reg31 asm("r31");
 
-	//0x0 of player gets used in GKI_getfirst, which dereferences the dereferenced pointer
-	//result can be used for heromanager, which adds 200 to the new pointer and dereferences it again
-	
-	uint32_t *firstPlayer = **(uint32_t***)reg30;
-	firstPlayer = *(uint32_t**)((uint32_t)firstPlayer + 200);
-	uint32_t* temp = (uint32_t*)((uint32_t)firstPlayer + 0xA0);
-	firstPlayer = *(uint32_t**)((uint8_t*)firstPlayer + 0xA0);
-	
-	// i got this horrific line of code from following the pointer trail in heroManager_Q33
-	//40 is 0xA0 / 4
-	//0x9C of heromanager struct is number of characters, 0xA0 of heroManager struct is start of character struct
-
-	if (*reg30 != firstPlayer)
+	int numPlayer = reg30[23];
+	int* dataSection = AITable;
+	if (numPlayer > 0 && dataSection[numPlayer]  == -1) 
 	{
-		int numPlayer = 0;
-		for (int i = 0; i < 3; i++)
-		{
-			if (temp[i] == *reg30) 
-			{
-				numPlayer = i;
-				break;
-			}
-			
-		}
-		int* dataSection = AITable;
-		if (numPlayer > 0 && dataSection[numPlayer]  == -1) 
-		{
-			dataSection[numPlayer] = __nw__FUI(sizeof(helperAI_t));
-			helperConstructor((helperAI_t*)dataSection[numPlayer], numPlayer);
-		}
-		helperAI_t* aiObj = dataSection[numPlayer];
-		helperLoop(aiObj, temp);
+		dataSection[numPlayer] = __nw__FUI(sizeof(helperAI_t));
+		helperConstructor((helperAI_t*)dataSection[numPlayer], numPlayer);
+	}
+	helperAI_t* aiObj = dataSection[numPlayer];
 
-		reg31 = aiObj->vpad_held;
-		reg28 = aiObj->vpad_fp;
-		reg29 = aiObj->vpad_sp;
+	if (numPlayer) // 0x5c of hero obj is hero number
+	{
+		helperLoop(aiObj, temp);
+	}
+	else
+	{
+		aiObj->vpad_held = reg31;
+		aiObj->vpad_fp = reg28;
+		aiObj->vpad_sp = reg29;
 	}
 
-	reg30[1] = reg31; //held
-	reg30[2] = reg28; //first frame
-	reg30[3] = reg29; //switch frame
+	reg30[1] = aiObj->vpad_held; //held
+	reg30[2] = aiObj->vpad_fp; //first frame
+	reg30[3] = aiObj->vpad_sp; //switch frame
 	return;
 } // return to 804ee6c8
 

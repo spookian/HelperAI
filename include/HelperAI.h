@@ -11,7 +11,7 @@
 #define HID_BUTTON_1		0x0020
 
 //AI flag things
-#define AI_TARGET_ENEMY 	0x0001
+#define AI_PIGGYBACK		0x0001
 
 //Compiler things
 #define false 0
@@ -23,11 +23,14 @@ typedef char bool;
 
 typedef struct helperAI_s
 {
+	bool active;
 	uint32_t charID;
+	uint32_t ctrlID; // used for piggybacking
 	void* target;
 
 	uint16_t timer;
 	uint16_t flags;
+
 	uint32_t vpad_fp;
 	uint32_t vpad_sp;
 	uint32_t vpad_held;

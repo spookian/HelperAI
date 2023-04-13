@@ -18,18 +18,26 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 	register uint32_t *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
 	register uint32_t reg31 asm("r31");
 
-	int numPlayer = reg30[23];
+	int numPlayer = reg30[23]; // 0x5C of hero obj is hero number
 	int* dataSection = AITable;
 	if (numPlayer > 0 && dataSection[numPlayer]  == -1) 
 	{
 		dataSection[numPlayer] = __nw__FUI(sizeof(helperAI_t));
 		helperConstructor((helperAI_t*)dataSection[numPlayer], numPlayer);
+		if (numPlayer == 0) (helperAI_t*)(dataSection[numPlayer])->active = false;
 	}
-	helperAI_t* aiObj = dataSection[numPlayer];
+	helperAI_t* aiObj = ((helperAI_t**)dataSection)[numPlayer];
 
-	if (numPlayer) // 0x5c of hero obj is hero number
+	if (numPlayer)
 	{
-		helperLoop(aiObj, temp);
+		if (aiObj->flags & AI_PIGGYBACK)
+		{
+			helperAI_t* ctrlObj = ((helperAI_t**)dataSection)[aiObj->ctrlID]; // uh depending on the order you might get a frame or three of input lag oopsie my bad
+			aiObj->vpad_held = ctrlObj->vpad_held;
+			aiObj->vpad_fp = ctrlObj->vpad_fp;
+			aiObj->vpad_sp = ctrlObj->vpad_sp;
+		}
+		else { helperLoop(aiObj, temp); }
 	}
 	else
 	{
@@ -37,6 +45,7 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 		aiObj->vpad_fp = reg28;
 		aiObj->vpad_sp = reg29;
 	}
+	// Reason for this refactor was so Player 1's inputs could get recorded without any nonsense happening
 
 	reg30[1] = aiObj->vpad_held; //held
 	reg30[2] = aiObj->vpad_fp; //first frame
@@ -144,6 +153,8 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 
 void helperConstructor(helperAI_t* result, uint32_t heroNumber)
 {
+	result->active = true;
+	result->ctrlID = 0;
 	result->charID = heroNumber;
 	result->target = 0;
 	result->timer = 0;

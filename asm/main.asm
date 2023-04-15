@@ -16,10 +16,15 @@ __GOLEM_HOOK_START:
 	stw %r3, 0x61BC (%r4)
 	# piggybackHook
 
-	lis %r3, (unlinkHook+0x48000001-0x805058f0)@ha
-	addi %r3, %r3, (unlinkHook+0x48000001-0x805058f0)@l
+	lis %r3, (unlinkParent_PiggyHook+0x48000001-0x805058f0)@ha
+	addi %r3, %r3, (unlinkParent_PiggyHook+0x48000001-0x805058f0)@l
 	stw %r3, 0x58f0 (%r4)
-	# unlinkHook
+	# unlinkParent_PiggyHook
 
+	lis %r3, (unlinkChild_PiggyHook+0x48000001-0x80505930)@ha
+	addi %r3, %r3, (unlinkChild_PiggyHook+0x48000001-0x80505930)@l
+	stw %r3, 0x5930 (%r4)
+	# unlinkChild_PiggyHook
+	
 	b __start_RTDL
 	# end

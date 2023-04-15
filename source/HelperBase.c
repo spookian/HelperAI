@@ -64,7 +64,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	void* player = (void*)(heroTable[0]); 
 	void* charPtr = (void*)(heroTable[self->charID]);
 	vec2_t* helperPos = location__Q43scn4step4hero4HeroCFv(charPtr);
-	vec2_t* leaderPos = location__Q43scn4step4hero4HeroCFv(self->target);
+	vec2_t* leaderPos = location__Q43scn4step4hero4HeroCFv(player);
 
 	int* enemyManager = *(int**)player; //0x0 of the player object leads to component ptr. this can be passed into enemy manager
 	enemyManager = (int*)enemyManager__Q33scn4step9ComponentFv(enemyManager);

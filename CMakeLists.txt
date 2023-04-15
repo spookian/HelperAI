@@ -27,7 +27,7 @@ add_custom_command(
 	TARGET Help 
 	COMMAND ${DKP_AS_TOOL} ./asm/main.asm -o ./main.o
 	COMMAND ${DKP_C_COMP} ${C_FLAGS} ${C_FILES} 
-	COMMAND ${DKP_C_COMP} ${LD_FLAGS} ${OBJ_FILES} ./main.o -o ./build/Helper.elf
+	COMMAND ${DKP_C_COMP} ${LD_FLAGS} ./main.o ${OBJ_FILES} -o ./build/Helper.elf
 	COMMAND ${DKP_DOL_TOOL} ./build/Helper.elf ./build/Helper.dol
 	COMMAND ${GOLEM_PATCHER} ./build/Helper.dol
 	COMMAND del *.o

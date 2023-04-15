@@ -13,44 +13,43 @@ const float helperRunDistance 	 = 2.5f;
 
 void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4, 
 {
-	register uint32_t reg28 asm("r28"); // holds input
-	register uint32_t reg29 asm("r29");
-	register uint32_t *reg30 asm("r30"); // holds pointer to hid, which holds pointer to current player? 81564328
-	register uint32_t reg31 asm("r31");
+	uint32_t* heroPtr = *(uint32_t**)HIDptr;
+	uint32_t*** componentPtr = (uint32_t***)(*heroPtr);
+	uint32_t* heroTable = (componentPtr[50])[40];
 
-	int numPlayer = reg30[23]; // 0x5C of hero obj is hero number
-	helperAI_t** dataSection = AITable;
-	if (numPlayer > 0 && dataSection[numPlayer]  == -1) 
+	int numPlayer = HIDptr[23]; // 0x5C of hero obj is hero number
+	if (numPlayer > 0 && AITable[numPlayer]  == -1) 
 	{
-		dataSection[numPlayer] = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
-		helperConstructor(dataSection[numPlayer], numPlayer);
-		if (numPlayer == 0) dataSection[numPlayer]->flags = 0;
+		AITable[numPlayer] = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
+		helperConstructor(AITable[numPlayer], numPlayer);
+		if (numPlayer == 0) AITable[numPlayer]->flags = 0;
 	}
-	helperAI_t* aiObj = ((helperAI_t**)dataSection)[numPlayer];
+	helperAI_t* aiObj = AITable[numPlayer];
 
-	if (numPlayer)
+	if (aiObj->flags & AI_ACTIVE)
 	{
 		if (aiObj->flags & AI_PIGGYBACK)
 		{
-			helperAI_t* ctrlObj = dataSection[aiObj->ctrlID]; // uh depending on the order you might get a frame or three of input lag oopsie my bad
+			helperAI_t* ctrlObj = AITable[aiObj->ctrlID]; // uh depending on the order you might get a frame or three of input lag oopsie my bad
 			aiObj->vpad_held = ctrlObj->vpad_held;
 			aiObj->vpad_fp = ctrlObj->vpad_fp;
 			aiObj->vpad_sp = ctrlObj->vpad_sp;
 		}
-		else { helperLoop(aiObj, temp); }
+		else { helperLoop(aiObj, heroTable); }
+		
+		HIDptr[1] = aiObj->vpad_held; //held
+		HIDptr[2] = aiObj->vpad_fp; //first frame
+		HIDptr[3] = aiObj->vpad_sp; //switch frame
 	}
 	else
 	{
-		aiObj->vpad_held = reg31;
-		aiObj->vpad_fp = reg28;
-		aiObj->vpad_sp = reg29;
+		aiObj->vpad_held = HIDptr[1];
+		aiObj->vpad_fp = HIDptr[2];
+		aiObj->vpad_sp = HIDptr[3];
 	}
 	// Reason for this refactor was so Player 1's inputs could get recorded without any nonsense happening
 
-	reg30[1] = aiObj->vpad_held; //held
-	reg30[2] = aiObj->vpad_fp; //first frame
-	reg30[3] = aiObj->vpad_sp; //switch frame
-	return;
+	return hitStop__Q43scn4step4hero4HeroFv(heroPtr);
 } // return to 804ee6c8
 
 //don't edit return
@@ -64,8 +63,8 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	//start of character table is first player
 	void* player = (void*)(heroTable[0]); 
 	void* charPtr = (void*)(heroTable[self->charID]);
-	vec2_t* helperPos = (vec2_t*)RTDL_HEROLOCATION(charPtr);
-	vec2_t* leaderPos = (vec2_t*)RTDL_HEROLOCATION(self->target);
+	vec2_t* helperPos = location__Q43scn4step4hero4HeroCFv(charPtr);
+	vec2_t* leaderPos = location__Q43scn4step4hero4HeroCFv(self->target);
 
 	int* enemyManager = *(int**)player; //0x0 of the player object leads to component ptr. this can be passed into enemy manager
 	enemyManager = (int*)enemyManager__Q33scn4step9ComponentFv(enemyManager);
@@ -95,7 +94,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		//check if enemy still exists and if not relock onto main character
 		if (stillHere)
 		{
-			targetPos = RTDL_ENEMYLOCATION(self->target);
+			targetPos = location__Q43scn4step5enemy5EnemyCFv(self->target);
 			targetPos = checkEnemyPos(self, player, helperPos, leaderPos, targetPos);
 			if (self->target == enemy) enemyTarget = 1;
 		}
@@ -117,7 +116,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 		if (diffX > 0.0f) { held_button = HID_BUTTON_RIGHT; }
 		else if (diffX < 0.0f) { held_button = HID_BUTTON_LEFT; }
 
-		if (absDiffX >= helperRunDistance) { spress_button = held_button; fpress_button = held_button };
+		if (absDiffX >= helperRunDistance) { spress_button = held_button; fpress_button = held_button; };
 	}
 
 	if (diffY > helperDetectDistance)

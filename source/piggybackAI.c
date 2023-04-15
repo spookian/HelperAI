@@ -3,7 +3,7 @@
 
 //function that something something hooks into piggyback loop to disconnect ais from each other
 
-void unlinkHook(void *ptr) //805058f0
+void unlinkHook(uint32_t *ptr) //805058f0
 {
 	uint32_t *hero = **(uint32_t***)ptr;
 	uint32_t piggyID = hero[23];	
@@ -27,7 +27,7 @@ void piggybackHook(void* piggybacked, void* piggybacker)
 
 	if (isMainPlayer__Q43scn4step4hero4HeroCFv(receivingObj))
 	{
-		if (piggyAI->active == false) okPiggy = 1; 
+		if ((!piggyAI->flags) & AI_ACTIVE) okPiggy = 1; 
 		// check if ai is deactivated on piggyObj and set okPiggy to true if so
 	}
 	else if (isMainPlayer__Q43scn4step4hero4HeroCFv(piggyObj))

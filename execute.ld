@@ -8,6 +8,7 @@
 "enemyManager__Q33scn4step9ComponentFv" = 0x8023f330;
 "isMainPlayer__Q43scn4step4hero4HeroCFv" = 0x804ebafc;
 "setChild__Q43scn4step4hero9PiggybackFRQ43scn4step4hero9Piggyback" = 0x80505858;
+"hitStop__Q43scn4step4hero4HeroFv" = 0x804edafc;
 
 ENTRY(__GOLEM_HOOK_START)
 

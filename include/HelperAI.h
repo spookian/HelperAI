@@ -1,5 +1,7 @@
 //Esoteric things
-#define RTDL_END_MEMORY 0x808D120C //end of vanilla memory
+#ifndef GOL_HELPER_AI
+#define GOL_HELPER_AI
+
 #define noheader __attribute__((naked))
 
 //Input things
@@ -36,8 +38,11 @@ typedef struct helperAI_s
 	uint32_t vpad_held;
 } helperAI_t;
 
-noheader void helperInputHook();
+extern void* hitStop__Q43scn4step4hero4HeroFv(void* something);
+
+void* helperInputHook(uint32_t* HIDptr);
 void helperConstructor(helperAI_t* result, uint32_t heroNumber);
 void helperLoop(helperAI_t* self, uint32_t* heroTable);
 
 extern helperAI_t* AITable[4];
+#endif

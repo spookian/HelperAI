@@ -36,7 +36,6 @@ typedef struct helperAI_s
 	uint32_t vpad_held;
 } helperAI_t;
 
-extern void hIH_Goto();
 noheader void helperInputHook();
 void helperConstructor(helperAI_t* result, uint32_t heroNumber);
 void helperLoop(helperAI_t* self, uint32_t* heroTable);

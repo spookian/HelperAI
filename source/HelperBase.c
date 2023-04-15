@@ -11,7 +11,7 @@ const float helperDetectDistance = 1.7f;
 const float helperDetectEnemy 	 = 1.5f;
 const float helperRunDistance 	 = 2.5f;
 
-noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero3HidFv
+void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4, 
 {
 	register uint32_t reg28 asm("r28"); // holds input
 	register uint32_t reg29 asm("r29");

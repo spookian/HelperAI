@@ -18,5 +18,6 @@ noheader void __GOLEM_HOOK_START()
 	*(uint32_t*)x = ROCKY_BRANCHHOOK(x, hIH_Goto);
 
 	*(uint32_t*)(0x805061bc) = ROCKY_BRANCHHOOK(0x805061bc, piggybackHook) | 1;
+	*(uint32_t*)(0x805058f0) = ROCKY_BRANCHHOOK(0x805058f0, unlinkHook);
 	return __start_RTDL();
 }

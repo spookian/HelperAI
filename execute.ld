@@ -2,7 +2,6 @@
 "__dl__FPv" = 0x801cc8c0;
 "__start_RTDL" = 0x80006310;
 "AbsF32__Q33hel4math4MathFf" = 0x80387a58;
-"hIH_Goto" = 0x804ee6c8;
 "vc_mutableArr_enemy" = 0x803773C4;
 "location__Q43scn4step5enemy5EnemyCFv" = 0x80375e8c;
 "location__Q43scn4step4hero4HeroCFv" = 0x804eda9c;

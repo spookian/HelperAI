@@ -12,6 +12,7 @@
 
 //AI flag things
 #define AI_PIGGYBACK		0x0001
+#define AI_ACTIVE		0x0002
 
 //Compiler things
 #define false 0
@@ -23,7 +24,6 @@ typedef char bool;
 
 typedef struct helperAI_s
 {
-	bool active;
 	uint32_t charID;
 	uint32_t ctrlID; // used for piggybacking
 	void* target;
@@ -40,3 +40,5 @@ extern void hIH_Goto();
 noheader void helperInputHook();
 void helperConstructor(helperAI_t* result, uint32_t heroNumber);
 void helperLoop(helperAI_t* self, uint32_t* heroTable);
+
+extern helperAI_t* AITable[4];

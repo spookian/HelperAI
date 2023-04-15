@@ -3,7 +3,7 @@
 #include <enemyCheck.h>
 #include <Hook/OperatorNewDelete.h>
 
-uint32_t AITable[4] = {-1, -1, -1, -1};
+helperAI_t* AITable[4] = {-1, -1, -1, -1};
 const char cpuString[] = {0x00, 'C', 0x00, 'P', 0x00, 'U', 0x00, 0x00}; 
 //wchar table to substitute in lyt
 
@@ -19,12 +19,12 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 	register uint32_t reg31 asm("r31");
 
 	int numPlayer = reg30[23]; // 0x5C of hero obj is hero number
-	int* dataSection = AITable;
+	helperAI_t** dataSection = AITable;
 	if (numPlayer > 0 && dataSection[numPlayer]  == -1) 
 	{
-		dataSection[numPlayer] = __nw__FUI(sizeof(helperAI_t));
-		helperConstructor((helperAI_t*)dataSection[numPlayer], numPlayer);
-		if (numPlayer == 0) (helperAI_t*)(dataSection[numPlayer])->active = false;
+		dataSection[numPlayer] = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
+		helperConstructor(dataSection[numPlayer], numPlayer);
+		if (numPlayer == 0) dataSection[numPlayer]->flags = 0;
 	}
 	helperAI_t* aiObj = ((helperAI_t**)dataSection)[numPlayer];
 
@@ -32,7 +32,7 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 	{
 		if (aiObj->flags & AI_PIGGYBACK)
 		{
-			helperAI_t* ctrlObj = ((helperAI_t**)dataSection)[aiObj->ctrlID]; // uh depending on the order you might get a frame or three of input lag oopsie my bad
+			helperAI_t* ctrlObj = dataSection[aiObj->ctrlID]; // uh depending on the order you might get a frame or three of input lag oopsie my bad
 			aiObj->vpad_held = ctrlObj->vpad_held;
 			aiObj->vpad_fp = ctrlObj->vpad_fp;
 			aiObj->vpad_sp = ctrlObj->vpad_sp;
@@ -56,8 +56,6 @@ noheader void helperInputHook() //hooks into 804ee6bc - update__Q43scn4step4hero
 //don't edit return
 void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity with a move struct
 {
-	self->flags = 0;
-	
 	uint32_t held_button = 0;
 	uint32_t fpress_button = 0;
 	uint32_t spress_button = 0;
@@ -153,12 +151,11 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 
 void helperConstructor(helperAI_t* result, uint32_t heroNumber)
 {
-	result->active = true;
 	result->ctrlID = 0;
 	result->charID = heroNumber;
 	result->target = 0;
 	result->timer = 0;
-	result->flags = 0;
+	result->flags = AI_ACTIVE;
 	result->vpad_fp = 0;
 	result->vpad_sp = 0;
 	result->vpad_held = 0;

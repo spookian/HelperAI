@@ -10,14 +10,14 @@ __GOLEM_HOOK_START:
 	stw %r3, -0x1920 (%r4)
 	# HelperInputHook branch and argument setup
 
-	rlwinm %r3, %r3, 0, 0xFF000000
-	addi %r3, %r3, (piggybackHook-0x805061bc+1)@ha
+	lis %r3, (piggybackHook+0x48000001-0x805061bc)@h
+	ori %r3, %r3, (piggybackHook+0x48000001-0x805061bc)@l
 	lis %r4, 0x8050
 	stw %r3, 0x61BC (%r4)
 	# piggybackHook
 
-	rlwinm %r3, %r3, 0, 0xFF000000
-	addi %r3, %r3, (unlinkHook-0x805058f0+1)@l
+	lis %r3, (unlinkHook+0x48000001-0x805058f0)@ha
+	addi %r3, %r3, (unlinkHook+0x48000001-0x805058f0)@l
 	stw %r3, 0x58f0 (%r4)
 	# unlinkHook
 

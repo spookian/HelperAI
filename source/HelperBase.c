@@ -15,10 +15,10 @@ void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4,
 {
 	uint32_t* heroPtr = *(uint32_t**)HIDptr;
 	uint32_t*** componentPtr = (uint32_t***)(*heroPtr);
-	uint32_t* heroTable = (componentPtr[50])[40];
+	uint32_t* heroTable = &((componentPtr[50])[40]);
 
-	int numPlayer = HIDptr[23]; // 0x5C of hero obj is hero number
-	if (numPlayer > 0 && AITable[numPlayer]  == -1) 
+	int numPlayer = heroPtr[23]; // 0x5C of hero obj is hero number
+	if (AITable[numPlayer]  == -1) 
 	{
 		AITable[numPlayer] = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
 		helperConstructor(AITable[numPlayer], numPlayer);
@@ -50,7 +50,7 @@ void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4,
 	// Reason for this refactor was so Player 1's inputs could get recorded without any nonsense happening
 
 	return hitStop__Q43scn4step4hero4HeroFv(heroPtr);
-} // return to 804ee6c8
+}
 
 //don't edit return
 void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity with a move struct

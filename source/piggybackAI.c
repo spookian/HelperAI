@@ -18,28 +18,17 @@ void unlinkHook(uint32_t *ptr) //805058f0
 
 void piggybackHook(void* piggybacked, void* piggybacker)
 {
-	bool okPiggy = 0;
 	uint32_t* receivingObj = *(uint32_t**)(piggybacked);
 	uint32_t* piggyObj = *(uint32_t**)(piggybacker);
 
 	helperAI_t* receivingAI = AITable[receivingObj[23]];
 	helperAI_t* piggyAI = AITable[piggyObj[23]];
 
-	if (isMainPlayer__Q43scn4step4hero4HeroCFv(receivingObj))
+	if ((piggyAI->flags & AI_ACTIVE) == 0)
 	{
-		if ((!piggyAI->flags) & AI_ACTIVE) okPiggy = 1; 
-		// check if ai is deactivated on piggyObj and set okPiggy to true if so
-	}
-	else if (isMainPlayer__Q43scn4step4hero4HeroCFv(piggyObj))
-	{
-		okPiggy = 1;
-		piggyAI->flags |= AI_PIGGYBACK;
-		piggyAI->ctrlID = receivingAI->charID;
-	}
-	// have to be mutually exclusive or else helpers would be hopping all over each other 
+		receivingAI->flags |= AI_PIGGYBACK;
+		receivingAI->ctrlID = piggyAI->charID;
 
-	if (okPiggy)
-	{
 		setChild__Q43scn4step4hero9PiggybackFRQ43scn4step4hero9Piggyback(piggybacked, piggybacker);
 	}
 	return;

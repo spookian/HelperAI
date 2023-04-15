@@ -7,7 +7,7 @@ void unlinkHook(uint32_t *ptr) //805058f0
 {
 	uint32_t *hero = **(uint32_t***)ptr;
 	uint32_t piggyID = hero[23];	
-	AITable[piggyID]->flags |= !(AI_PIGGYBACK);
+	AITable[piggyID]->flags &= 0xFFFE;
 
 	*ptr = 0;
 	return;

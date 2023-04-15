@@ -5,10 +5,16 @@ __GOLEM_HOOK_START:
 	stw %r3, -0x1944 (%r4)
 	# HelperInputHook branch
 
-	li %r3, 1
-	addi %r3, %r3, piggybackHook-0x805061bc
+	rlwinm %r3, %r3, 0, 0xFF000000
+	addi %r3, %r3, piggybackHook-0x805061bc+1
 	lis %r4, 0x8050
 	stw %r3, 0x61BC (%r4)
 	# piggybackHook
 
+	rlwinm %r3, %r3, 0, 0xFF000000
+	addi %r3, %r3, unlinkHook-0x805058f0+1
+	stw %r3, 0x58f0 (%r4)
 	# unlinkHook
+
+	b __start_RTDL
+	# end

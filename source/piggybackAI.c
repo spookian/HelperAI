@@ -1,4 +1,5 @@
 #include <helperAI.h>
+#include <types.h>
 #include <piggybackAI.h>
 
 //function that something something hooks into piggyback loop to disconnect ais from each other
@@ -34,7 +35,7 @@ void piggybackHook(void* piggybacked, void* piggybacker)
 	helperAI_t* receivingAI = AITable[receivingObj[23]];
 	helperAI_t* piggyAI = AITable[piggyObj[23]];
 
-	if ((piggyAI->flags & AI_ACTIVE) == 0)
+	if (piggyAI->flags & AI_PLAYER)
 	{
 		receivingAI->flags |= AI_PIGGYBACK;
 		receivingAI->ctrlID = piggyAI->charID;

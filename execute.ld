@@ -9,6 +9,7 @@
 "isMainPlayer__Q43scn4step4hero4HeroCFv" = 0x804ebafc;
 "setChild__Q43scn4step4hero9PiggybackFRQ43scn4step4hero9Piggyback" = 0x80505858;
 "hitStop__Q43scn4step4hero4HeroFv" = 0x804edafc;
+"setText__Q23lyt12PaneAccessorCFPCw" = 0x801b9b04;
 
 ENTRY(__GOLEM_HOOK_START)
 

@@ -1,11 +1,9 @@
 #include <HelperAI.h>
-#include <RTDLMacros.h>
+#include <types.h>
 #include <enemyCheck.h>
 #include <Hook/OperatorNewDelete.h>
 
 helperAI_t* AITable[4] = {-1, -1, -1, -1};
-const char cpuString[] = {0x00, 'C', 0x00, 'P', 0x00, 'U', 0x00, 0x00}; 
-//wchar table to substitute in lyt
 
 const float helperDetectDistance = 1.7f;
 const float helperDetectEnemy 	 = 1.5f;
@@ -20,13 +18,12 @@ void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4,
 	int numPlayer = heroPtr[23]; // 0x5C of hero obj is hero number
 	if (AITable[numPlayer]  == -1) 
 	{
-		AITable[numPlayer] = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
-		helperConstructor(AITable[numPlayer], numPlayer);
-		if (numPlayer == 0) AITable[numPlayer]->flags = 0;
+		AITable[numPlayer] = generateAI(numPlayer);
 	}
+	
 	helperAI_t* aiObj = AITable[numPlayer];
 
-	if (aiObj->flags & AI_ACTIVE)
+	if (!(aiObj->flags & AI_PLAYER))
 	{
 		if (aiObj->flags & AI_PIGGYBACK)
 		{
@@ -154,9 +151,18 @@ void helperConstructor(helperAI_t* result, uint32_t heroNumber)
 	result->charID = heroNumber;
 	result->target = 0;
 	result->timer = 0;
-	result->flags = AI_ACTIVE;
+	result->flags = 0;
 	result->vpad_fp = 0;
 	result->vpad_sp = 0;
 	result->vpad_held = 0;
+	
+	if (heroNumber == 0) result->flags = AI_PLAYER;
 	return;
+}
+
+helperAI_t* generateAI(uint32_t heroNumber)
+{
+	helperAI_t* ret = (helperAI_t*)__nw__FUI(sizeof(helperAI_t));
+	helperConstructor(ret, heroNumber);
+	return ret;
 }

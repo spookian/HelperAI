@@ -26,5 +26,11 @@ __GOLEM_HOOK_START:
 	stw %r3, 0x5930 (%r4)
 	# unlinkChild_PiggyHook
 	
+	lis %r3, (PlayerNumHook+0x48000001-0x805d3e44)@ha
+	addi %r3, %r3, (PlayerNumHook+0x48000001-0x805d3e44)@l
+	lis %r4, 0x805d
+	stw %r3, 0x3e44 (%r4)
+	# PlayerNumHook
+	
 	b __start_RTDL
 	# end

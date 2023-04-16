@@ -1,6 +1,7 @@
 //Esoteric things
 #ifndef GOL_HELPER_AI
 #define GOL_HELPER_AI
+#include <types.h>
 
 #define noheader __attribute__((naked))
 
@@ -14,15 +15,7 @@
 
 //AI flag things
 #define AI_PIGGYBACK		0x0001
-#define AI_ACTIVE		0x0002
-
-//Compiler things
-#define false 0
-#define true 1
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef char bool;
+#define AI_PLAYER		0x0002 // for reading purposes
 
 typedef struct helperAI_s
 {
@@ -43,6 +36,7 @@ extern void* hitStop__Q43scn4step4hero4HeroFv(void* something);
 void* helperInputHook(uint32_t* HIDptr);
 void helperConstructor(helperAI_t* result, uint32_t heroNumber);
 void helperLoop(helperAI_t* self, uint32_t* heroTable);
+helperAI_t* generateAI(uint32_t heroNumber);
 
 extern helperAI_t* AITable[4];
 #endif

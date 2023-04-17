@@ -35,8 +35,8 @@ __GOLEM_HOOK_START:
 	
 	lis %r3, 0x4800
 	ori %r3, %r3, 0x028c
-	lis %r4, 0x8017
-	stw %r3, 0xda2c (%r4)
+	lis %r4, 0x8018
+	stw %r3, -0x25D4 (%r4)
 	
 	lis %r3, 0x6000
 	lis %r4, 0x804f

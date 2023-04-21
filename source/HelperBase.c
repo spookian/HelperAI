@@ -12,9 +12,9 @@ const float helperRunDistance 	 = 2.5f;
 
 void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4, 
 {
-	uint32_t* heroPtr = *(uint32_t**)HIDptr;
-	uint32_t*** componentPtr = (uint32_t***)(*heroPtr);
-	uint32_t* heroTable = &((componentPtr[50])[40]);
+	uint32_t *heroPtr = *(uint32_t**)HIDptr;
+	uint32_t ***componentPtr = (uint32_t***)(*heroPtr);
+	uint32_t *heroTable = &((componentPtr[50])[40]);
 
 	int numPlayer = heroPtr[23]; // 0x5C of hero obj is hero number
 	if (AITable[numPlayer]  == -1) 
@@ -46,7 +46,7 @@ void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4,
 		aiObj->vpad_sp = HIDptr[3];
 	}
 	// Reason for this refactor was so Player 1's inputs could get recorded without any nonsense happening
-	if (heroPtr[23] == 0)
+	if (numPlayer == 0)
 	{
 		checkMainAndCreateHero(HIDptr);
 	}
@@ -81,7 +81,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	{
 		bool stillHere = false;
 		uint32_t *enemyList = (uint32_t*)((uint32_t)enemyManager + 144);
-		void* enemy = 0;
+		void *enemy = 0;
 
 		for (int j = 0; j < enemyList[0]; j++)
 		{

@@ -38,9 +38,12 @@ __GOLEM_HOOK_START:
 	lis %r4, 0x8018
 	stw %r3, -0x25D4 (%r4)
 	
-	lis %r3, 0x6000
+	lis %r3, 0x3860
 	lis %r4, 0x804f
 	stw %r3, -0x1C90 (%r4)
+	
+	lis %r3, 0x6000
+	stw %r3, -0x1C9C (%r4)
 	# controller hook
 	#
 	

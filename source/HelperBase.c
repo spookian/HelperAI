@@ -1,6 +1,7 @@
 #include <HelperAI.h>
 #include <types.h>
 #include <enemyCheck.h>
+#include <hero.h>
 #include <Hook/OperatorNewDelete.h>
 
 helperAI_t* AITable[4] = {-1, -1, -1, -1};
@@ -9,7 +10,7 @@ const float helperDetectDistance = 1.7f;
 const float helperDetectEnemy 	 = 1.5f;
 const float helperRunDistance 	 = 2.5f;
 
-void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4, 
+void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4, 
 {
 	uint32_t* heroPtr = *(uint32_t**)HIDptr;
 	uint32_t*** componentPtr = (uint32_t***)(*heroPtr);
@@ -45,6 +46,10 @@ void* helperInputHook(uint32_t* HIDptr) // retool for 0x804ee6e4,
 		aiObj->vpad_sp = HIDptr[3];
 	}
 	// Reason for this refactor was so Player 1's inputs could get recorded without any nonsense happening
+	if (heroPtr[23] == 0)
+	{
+		checkMainAndCreateHero(HIDptr);
+	}
 
 	return hitStop__Q43scn4step4hero4HeroFv(heroPtr);
 }

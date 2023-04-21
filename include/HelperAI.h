@@ -13,6 +13,8 @@
 #define HID_BUTTON_2		0x0010
 #define HID_BUTTON_1		0x0020
 
+#define HID_BUTTON_B		0x0200
+
 //AI flag things
 #define AI_PIGGYBACK		0x0001
 #define AI_PLAYER		0x0002 // for reading purposes

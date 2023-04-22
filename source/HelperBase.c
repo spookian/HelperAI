@@ -23,7 +23,8 @@ void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4,
 	}
 	
 	helperAI_t* aiObj = AITable[numPlayer];
-
+	//put a setflags function here
+	
 	if (!(aiObj->flags & AI_PLAYER))
 	{
 		if (aiObj->flags & AI_PIGGYBACK)
@@ -33,7 +34,7 @@ void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4,
 			aiObj->vpad_fp = ctrlObj->vpad_fp;
 			aiObj->vpad_sp = ctrlObj->vpad_sp;
 		}
-		else { helperLoop(aiObj, heroTable); }
+		else { helperLoop(aiObj, heroTable, heroPtr); }
 		
 		HIDptr[1] = aiObj->vpad_held; //held
 		HIDptr[2] = aiObj->vpad_fp; //first frame
@@ -55,7 +56,7 @@ void* helperInputHook(uint32_t *HIDptr) // retool for 0x804ee6e4,
 }
 
 //don't edit return
-void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity with a move struct
+void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* charPtr) //has to be an entity with a move struct
 {
 	uint32_t held_button = 0;
 	uint32_t fpress_button = 0;
@@ -64,7 +65,7 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 
 	//start of character table is first player
 	void* player = (void*)(heroTable[0]); 
-	void* charPtr = (void*)(heroTable[self->charID]);
+
 	vec2_t* helperPos = location__Q43scn4step4hero4HeroCFv(charPtr);
 	vec2_t* leaderPos = location__Q43scn4step4hero4HeroCFv(player);
 
@@ -74,8 +75,8 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable) //has to be an entity wit
 	vec2_t* targetPos = leaderPos;
 	if (self->target == player)
 	{	
-		self->target = player;
-		if (checkEnemyList(self, helperPos, leaderPos, enemyManager) != leaderPos) enemyTarget = 1;
+		targetPos = checkEnemyList(self, helperPos, leaderPos, enemyManager);
+		if (targetPos != leaderPos) enemyTarget = 1;
 	}
 	else
 	{

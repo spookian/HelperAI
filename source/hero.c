@@ -35,7 +35,9 @@ void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 {
 	uint32_t *heroPtr = (uint32_t*)*hidPtr;
 	uint32_t *heroManager = heroManager__Q33scn4step9ComponentFv(*(uint32_t**)heroPtr);
-	uint32_t curNum = heroManager[39];
+
+	uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], 0));
+	uint32_t curNum = ((uint32_t*)inactiveHero)[15];
 	uint32_t individHero[20]; // research seems to imply individHero is 64 bytes but im not taking any chances
 	
 	vec2_t firstV = {0.f, 0.f};
@@ -58,10 +60,18 @@ void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 		createHeroAndStart__Q43scn4step4hero7ManagerFUlRCQ33hel4math7Vector2RCQ33hel4math7Vector2bRCQ33scn4step17ContextHeroIndiviQ43scn4step4hero10StepInKind(heroManager, curNum, &firstV, &secV, 1, individHero, 4);
 		// that last argument is very strange, it's only set to 3 for the main player and 4 for any other players who join in
 		
-		uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], 0));
 		// would you believe that the inactivehero mutable array gets reorganized once a hero is created? the latest inactivehero gets deleted once the 'active' byte is set to 1 and the other ones in the array get their indexes shifted up
 		((uint32_t*)inactiveHero)[16] = character;
 		inactiveHero[0x46] = 1;
+		
+		if (AITable[curNum] == -1)
+		{
+			AITable[curNum] = generateAI(curNum);
+		}
+		else
+		{
+			helperConstructor(AITable[curNum], curNum);
+		}
 	}
 	
 	return;

@@ -15,7 +15,7 @@ set(DKP_AS_TOOL ${DEVKITPATH}/devkitPPC/bin/powerpc-eabi-as)
 set(DKP_DOL_TOOL ${DEVKITPATH}/tools/bin/elf2dol)
 set(GOLEM_PATCHER "./golem")
 
-set(C_FLAGS -g -O0 -Wall -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -fomit-frame-pointer -I ./include/ -c)
+set(C_FLAGS -g -O3 -Wall -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -fomit-frame-pointer -I ./include/ -c)
 set(LD_FLAGS -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -nodefaultlibs -nostartfiles -T execute.ld)
 set(C_FILES ./source/HelperBase.c ./source/enemyCheck.c ./source/piggybackAI.c ./source/lytHook.c ./source/hero.c)
 

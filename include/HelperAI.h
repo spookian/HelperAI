@@ -17,7 +17,11 @@
 
 //AI flag things
 #define AI_PIGGYBACK		0x0001
-#define AI_PLAYER		0x0002 // for reading purposes
+#define AI_PLAYER			0x0002 // for reading purposes
+#define AI_SINGLESTOP		0x0004 // stop moving for a single frame
+#define AI_RUNNING			0x0008 // if ai is already running
+#define AI_FLYING			0x0010
+#define AI_INAIR			0x0020
 
 typedef struct helperAI_s
 {
@@ -37,7 +41,7 @@ extern void* hitStop__Q43scn4step4hero4HeroFv(void* something);
 
 void* helperInputHook(uint32_t* HIDptr);
 void helperConstructor(helperAI_t* result, uint32_t heroNumber);
-void helperLoop(helperAI_t* self, uint32_t* heroTable);
+void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* heroPtr);
 helperAI_t* generateAI(uint32_t heroNumber);
 
 extern helperAI_t* AITable[4];

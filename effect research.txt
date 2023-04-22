@@ -1,7 +1,0 @@
-801884e4
-each entry in the array of effect strings (used by the game to access effect files) is 58 bytes long 
-the array is constant, as mint scripts predict whatever is in the array but it's also heap allocated.
-known offsets:
-	arr[0x5c] - CommonAbilityGet
-
-But we're not done yet, I need to how know this array gets set up, and how the effects work.

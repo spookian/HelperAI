@@ -58,7 +58,9 @@ void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 		createHeroAndStart__Q43scn4step4hero7ManagerFUlRCQ33hel4math7Vector2RCQ33hel4math7Vector2bRCQ33scn4step17ContextHeroIndiviQ43scn4step4hero10StepInKind(heroManager, curNum, &firstV, &secV, 1, individHero, 4);
 		// that last argument is very strange, it's only set to 3 for the main player and 4 for any other players who join in
 		
-		uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], curNum - 1));
+		uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], 0));
+		// would you believe that the inactivehero mutable array gets reorganized once a hero is created? the latest inactivehero gets deleted once the 'active' byte is set to 1 and the other ones in the array get their indexes shifted up
+		((uint32_t*)inactiveHero)[16] = character;
 		inactiveHero[0x46] = 1;
 	}
 	

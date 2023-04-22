@@ -20,13 +20,11 @@ cmake --build .
 Next, generate a Unix makefile with CMake, and build at the root of the repo.
 If all goes well, there should be a main_new.dol generated.
 
-**Do not forget to install Python 3 beforehand. This is the most important part of the process.**
-
 Finally, add the main_new.dol file to a RtDL copy of your choice, and rename it back to main.dol.
 
 ## Usage
 
-Use another controller to spawn a helper. The helper will automatically start moving on its own. 
+Press B on your Wii Remote to spawn a computer controlled helper during gameplay.
 
 ## Warning
 This is VERY UNSTABLE. Crashes WILL happen at any given moment. Pausing will crash the game the moment a helper is spawned.

@@ -12,6 +12,7 @@ extern uint32_t* infoManager__Q33scn4step9ComponentFv(uint32_t* component);
 extern uint32_t* enemyCtrl__Q53scn4step4boss14mahoroabattle26CustomFv(uint32_t* infoManager);
 extern uint32_t* heroPanel__Q43scn4step4info14InfoGameStatusFUl(uint32_t* infoManager, uint32_t panelNum);
 extern void SetupInfo__Q43scn4step4hero7UtilityFRQ43scn4step4info9HeroPanelQ43scn4step4hero4KindQ43scn4step4hero11AbilityKindbbb(uint32_t* infoManager, uint32_t unk_04, uint32_t unk_08, uint32_t unk_0c, uint32_t unk_10, uint32_t unk_14);
+extern uint32_t* mutableArray_InactiveHero(uint32_t* unk_00, uint32_t idx);
 
 void checkMainAndCreateHero(uint32_t *hidPtr);
 void setupPanel(uint32_t* componentPtr, uint32_t panelNum, uint32_t charId);

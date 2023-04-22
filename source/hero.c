@@ -57,6 +57,9 @@ void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 		individHero[1] = character;
 		createHeroAndStart__Q43scn4step4hero7ManagerFUlRCQ33hel4math7Vector2RCQ33hel4math7Vector2bRCQ33scn4step17ContextHeroIndiviQ43scn4step4hero10StepInKind(heroManager, curNum, &firstV, &secV, 1, individHero, 4);
 		// that last argument is very strange, it's only set to 3 for the main player and 4 for any other players who join in
+		
+		uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], curNum - 1));
+		inactiveHero[0x46] = 1;
 	}
 	
 	return;

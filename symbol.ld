@@ -19,5 +19,6 @@
 "enemyCtrl__Q53scn4step4boss14mahoroabattle26CustomFv" = 0x802f23e4;
 "heroPanel__Q43scn4step4info14InfoGameStatusFUl" = 0x805cfbb8;
 "SetupInfo__Q43scn4step4hero7UtilityFRQ43scn4step4info9HeroPanelQ43scn4step4hero4KindQ43scn4step4hero11AbilityKindbbb" = 0x8050f97c;
+"mutableArray_InactiveHero" = 0x804f4c0c;
 
 "setText__Q23lyt12PaneAccessorCFPCw" = 0x801b9b04;

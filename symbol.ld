@@ -21,4 +21,9 @@
 "SetupInfo__Q43scn4step4hero7UtilityFRQ43scn4step4info9HeroPanelQ43scn4step4hero4KindQ43scn4step4hero11AbilityKindbbb" = 0x8050f97c;
 "mutableArray_InactiveHero" = 0x804f4c0c;
 
+"water__Q43scn4step4hero4HeroFv" = 0x804edbac;
+"footState__Q43scn4step4hero4HeroFv" = 0x804eda94;
+"mapColl__Q43scn4step4hero4HeroFv" = 0x804edad4;
+"stateChecker__Q43scn4step4hero4HeroFv" = 0x804edb14;
+
 "setText__Q23lyt12PaneAccessorCFPCw" = 0x801b9b04;

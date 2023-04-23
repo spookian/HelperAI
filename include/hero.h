@@ -14,6 +14,11 @@ extern uint32_t* heroPanel__Q43scn4step4info14InfoGameStatusFUl(uint32_t* infoMa
 extern void SetupInfo__Q43scn4step4hero7UtilityFRQ43scn4step4info9HeroPanelQ43scn4step4hero4KindQ43scn4step4hero11AbilityKindbbb(uint32_t* infoManager, uint32_t unk_04, uint32_t unk_08, uint32_t unk_0c, uint32_t unk_10, uint32_t unk_14);
 extern uint32_t* mutableArray_InactiveHero(uint32_t* unk_00, uint32_t idx);
 
+extern uint32_t* water__Q43scn4step4hero4HeroFv(uint32_t* heroPtr);
+extern uint32_t* footState__Q43scn4step4hero4HeroFv(uint32_t* heroPtr);
+extern uint32_t* mapColl__Q43scn4step4hero4HeroFv(uint32_t* heroPtr);
+extern uint32_t* stateChecker__Q43scn4step4hero4HeroFv(uint32_t* heroPtr);
+
 void checkMainAndCreateHero(uint32_t *hidPtr);
 void setupPanel(uint32_t* componentPtr, uint32_t panelNum, uint32_t charId);
 #endif

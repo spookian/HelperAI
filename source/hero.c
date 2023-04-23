@@ -4,6 +4,25 @@
 #include <Hook/Math.h>
 #include <types.h>
 
+void setFlags(helperAI_t* self, uint32_t* heroPtr)
+{
+	self->flags &= 0xF;
+	
+	uint8_t* stateChecker = (uint8_t*)stateChecker__Q43scn4step4hero4HeroFv(heroPtr);
+	if (stateChecker[8]) self->flags |= AI_RUNNING;
+	
+	uint8_t* footState = (uint8_t*)footState__Q43scn4step4hero4HeroFv(heroPtr);
+	if (*footState == 0) self->flags |= AI_INAIR; 
+	
+	uint8_t* waterState = (uint8_t*)water__Q43scn4step4hero4HeroFv(heroPtr);
+	if (waterState[4]) self->flags |= AI_INWATER;
+		// 801e6a78 - isEnable__Q25pause11ButtonPanelCFv; used by IsInWater__Q43scn4step4hero11MintUtilityFv
+	
+	uint8_t* passThru = (uint8_t*)mapColl__Q43scn4step4hero4HeroFv(heroPtr);
+	if (passThru[0x86]) self->flags |= AI_PASSTHRU;
+	return;
+}
+
 void setupPanel(uint32_t* componentPtr, uint32_t panelNum, uint32_t charId)
 {
 	uint32_t *infoManager = infoManager__Q33scn4step9ComponentFv(componentPtr);

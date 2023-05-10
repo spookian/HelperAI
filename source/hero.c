@@ -55,13 +55,14 @@ void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 	uint32_t *heroPtr = (uint32_t*)*hidPtr;
 	uint32_t *heroManager = heroManager__Q33scn4step9ComponentFv(*(uint32_t**)heroPtr);
 
+	uint32_t inactiveNum = heroManager[44];
 	uint8_t* inactiveHero = (uint8_t*)(*mutableArray_InactiveHero(&heroManager[44], 0));
 	uint32_t curNum = ((uint32_t*)inactiveHero)[15];
 	uint32_t individHero[20]; // research seems to imply individHero is 64 bytes but im not taking any chances
 	
 	vec2_t firstV = {0.f, 0.f};
 	vec2_t secV = {0.f, 0.f};
-	if ((hidPtr[1] & HID_BUTTON_B) && (curNum < 4))
+	if ((hidPtr[1] & HID_BUTTON_B) && (inactiveNum != 0))
 	{
 		uint32_t character = 0x03 + curNum;
 		setupPanel((uint32_t*)*heroPtr, curNum, character);

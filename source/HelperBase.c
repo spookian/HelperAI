@@ -173,7 +173,7 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 			held_button |= HID_BUTTON_2;
 		}
 		
-		if ((self->flags & AI_PASSTHRU) && (absDiffY > helperDetectDistance)) 
+		if ((self->flags & AI_PASSTHRU) && (targetPos->y + helperDetectDistance < helperPos->y))
 		{
 			held_button |= HID_BUTTON_DOWN;
 		}

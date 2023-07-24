@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(HelperProject)
 
-#If you did not install CMake in the default location, may God have mercy on your soul.
+#If you did not install DKP in the default location, may God have mercy on your soul.
 if(WIN32)
 set(DEVKITPATH C:/devkitPro) 
 endif(WIN32)

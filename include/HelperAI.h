@@ -42,6 +42,8 @@ typedef struct helperAI_s
 	uint32_t vpad_fp;
 	uint32_t vpad_sp;
 	uint32_t vpad_held;
+	
+	float target_dist;
 } helperAI_t;
 
 extern void* hitStop__Q43scn4step4hero4HeroFv(void* something);

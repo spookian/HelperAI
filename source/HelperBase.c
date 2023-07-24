@@ -62,7 +62,8 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* charPtr) //has 
 	bool enemyTarget = 0;
 
 	//start of character table is first player
-	void* player = (void*)(heroTable[0]); 
+	uint32_t leaderNum = (charPtr[23] - 1);
+	void* player = (void*)(heroTable[leaderNum]); 
 
 	vec2_t* helperPos = location__Q43scn4step4hero4HeroCFv(charPtr);
 	vec2_t* leaderPos = location__Q43scn4step4hero4HeroCFv(player);

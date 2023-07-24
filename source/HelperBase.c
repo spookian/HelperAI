@@ -107,11 +107,11 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* charPtr) //has 
 		}
 	}
 
-	if ((self->flags & AI_SINGLESTOP) == 0) { basePollInput(self, targetPos, helperPos, enemyTarget); }
-	else { self->flags &= (!AI_SINGLESTOP); }// make this much more modular in future
+	basePollInput(self, targetPos, helperPos, enemyTarget);
+	// make this much more modular in future
 	
 	if (self->f_timer > 0) self->f_timer--;
-	if (self->s_timer > 0) self->s_timer--;
+	if (self->run_timer > 0) self->run_timer--;
 
 	return;
 }
@@ -123,11 +123,12 @@ void helperConstructor(helperAI_t* result, uint32_t heroNumber)
 	result->charID = heroNumber;
 	result->target = 0;
 	result->f_timer = 0;
-	result->s_timer = 0;
+	result->run_timer = 0;
 	result->flags = 0;
 	result->vpad_fp = 0;
 	result->vpad_sp = 0;
 	result->vpad_held = 0;
+	result->target_dist = 99.f;
 	
 	if (heroNumber == 0) result->flags = AI_PLAYER;
 	return;
@@ -151,30 +152,49 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 	float absDiffX = AbsF32__Q33hel4math4MathFf(diffX);
 	float absDiffY = AbsF32__Q33hel4math4MathFf(diffY);
 
-	if ((absDiffX >= helperDetectDistance) | enemyTarget)
+	if ((absDiffX >= helperDetectDistance) && (self->run_timer == 0))
 	{
 		if (diffX > 0.0f) { held_button = HID_BUTTON_RIGHT; }
 		else if (diffX < 0.0f) { held_button = HID_BUTTON_LEFT; }
+		fpress_button = held_button;
 
 		if ((absDiffX >= helperRunDistance) && ((self->flags & AI_RUNNING) == 0))
 		{ 
-			self->flags |= (AI_RUNNING | AI_SINGLESTOP);
+			self->flags |= AI_RUNNING;
+			self->run_timer = 5;
 		}
+	}
+	else if (self->run_timer == 0)
+	{
+		self->flags &= ~AI_RUNNING;
 	}
 
 	if ((self->flags & AI_INWATER) == 0)
 	{
 		if (diffY > helperDetectDistance)
 		{
-			if (self->f_timer == 0)
+			if ((self->flags & AI_INAIR) == 0)
 			{
-				self->f_timer == 35;
+				self->f_timer == 50;
 				fpress_button |= HID_BUTTON_2;
+				spress_button |= HID_BUTTON_2;
 			}
-			held_button |= HID_BUTTON_2;
+			else if (self->flags & AI_INAIR)
+			{
+				if (self->f_timer == 0)
+				{
+					fpress_button |= HID_BUTTON_2;
+					held_button |= HID_BUTTON_2;
+					self->f_timer == 45;
+				}
+				else
+				{
+					held_button |= HID_BUTTON_2;
+				}
+			}
 		}
 		
-		if ((self->flags & AI_PASSTHRU) && (targetPos->y + helperDetectDistance < helperPos->y))
+		if ((self->flags & AI_PASSTHRU) && (diffY >= helperDetectDistance))
 		{
 			held_button |= HID_BUTTON_DOWN;
 		}

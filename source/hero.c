@@ -6,10 +6,7 @@
 
 void setFlags(helperAI_t* self, uint32_t* heroPtr)
 {
-	self->flags &= 0xF;
-	
-	uint8_t* stateChecker = (uint8_t*)stateChecker__Q43scn4step4hero4HeroFv(heroPtr);
-	if (stateChecker[8]) self->flags |= AI_RUNNING;
+	self->flags &= (0xF + AI_RUNNING);
 	
 	uint8_t* footState = (uint8_t*)footState__Q43scn4step4hero4HeroFv(heroPtr);
 	if (*footState == 0) self->flags |= AI_INAIR; 
@@ -20,6 +17,9 @@ void setFlags(helperAI_t* self, uint32_t* heroPtr)
 	
 	uint8_t* passThru = (uint8_t*)mapColl__Q43scn4step4hero4HeroFv(heroPtr);
 	if (passThru[0x86]) self->flags |= AI_PASSTHRU;
+	
+	//use mapcoll, then precheck with it and call the result function in mapcoll class for jump?
+	// from what i understand result_mapcoll just blasts your stack with shit
 	return;
 }
 

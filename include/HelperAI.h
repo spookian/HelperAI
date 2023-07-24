@@ -19,7 +19,7 @@
 //AI flag things
 #define AI_PIGGYBACK		0x0001
 #define AI_PLAYER			0x0002 // for reading purposes
-#define AI_SINGLESTOP		0x0004 // stop moving for a single frame
+#define AI_OPOWERRUN		0x0004 // stop moving for a single frame
 #define AI_FLYING			0x0008
 
 #define AI_ALL				0xFFF0
@@ -36,7 +36,7 @@ typedef struct helperAI_s
 	void* target;
 
 	uint8_t f_timer;
-	uint8_t s_timer; // two timers that are able to hold approximately 4.25 seconds max
+	uint8_t run_timer; // two timers that are able to hold approximately 4.25 seconds max
 	uint16_t flags;
 
 	uint32_t vpad_fp;

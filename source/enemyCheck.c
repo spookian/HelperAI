@@ -27,19 +27,14 @@ vec2_t* checkEnemyList(helperAI_t* self, vec2_t *helperPos, vec2_t *leaderPos, v
 		void *enemy = *(void**)(vc_mutableArr_enemy(enemyList, i));
 		vec2_t* enemyPos = location__Q43scn4step5enemy5EnemyCFv(enemy);
 		
-		if (targetPos)
-		{
+		if (targetPos == 0) targetPos = enemyPos;
+		
 			// length from enemy
-			if (isInRadius(helperPos, 3.5f, enemyPos, &length) && (length < self->target_dist))
-			{
+		if (isInRadius(helperPos, 3.5f, enemyPos, &length) && (length < self->target_dist))
+		{
 				self->target_dist = length;
 				self->target = enemy;
 				targetPos = enemyPos;
-			}
-		}
-		else
-		{
-			targetPos = enemyPos;
 		}
 	}
 	if (enemyList[0] == 0) targetPos = leaderPos;

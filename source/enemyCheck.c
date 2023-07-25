@@ -93,7 +93,7 @@ vec2_t* checkEnemyList(helperAI_t* self, vec2_t *helperPos, vec2_t *leaderPos, v
 	{
 		void* bossPtr = 0;
 		int idx = 0;
-		while (bossPtr = 0)
+		while (bossPtr == 0)
 		{
 			bossPtr = *(void**)vc_mutableArr_boss(&bossList[57], idx);
 			idx++;

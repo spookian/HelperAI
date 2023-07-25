@@ -19,21 +19,29 @@
 //AI flag things
 #define AI_PIGGYBACK		0x0001
 #define AI_PLAYER			0x0002 // for reading purposes
-#define AI_OPOWERRUN		0x0004 // stop moving for a single frame
+#define AI_RUNNING			0x0004 // check running
 #define AI_FLYING			0x0008
 
 #define AI_ALL				0xFFF0
 
-#define AI_RUNNING			0x0010 // if ai is already running
+
 #define AI_INAIR			0x0020
 #define AI_INWATER			0x0040
 #define AI_PASSTHRU			0x0080
+
+enum TARGET_TYPE
+{
+	TARGET_PLAYER = 0,
+	TARGET_ENEMY,
+	TARGET_BOSS
+};
 
 typedef struct helperAI_s
 {
 	uint32_t charID;
 	uint32_t ctrlID; // used for piggybacking
 	void* target;
+	uint32_t target_type;
 
 	uint8_t f_timer;
 	uint8_t run_timer; // two timers that are able to hold approximately 4.25 seconds max
@@ -44,6 +52,7 @@ typedef struct helperAI_s
 	uint32_t vpad_held;
 	
 	float target_dist;
+	vec2_t prev_pos;
 } helperAI_t;
 
 extern void* hitStop__Q43scn4step4hero4HeroFv(void* something);

@@ -6,7 +6,7 @@
 
 void setFlags(helperAI_t* self, uint32_t* heroPtr)
 {
-	self->flags &= (0xF + AI_RUNNING);
+	self->flags &= 0xF;
 	
 	uint8_t* footState = (uint8_t*)footState__Q43scn4step4hero4HeroFv(heroPtr);
 	if (*footState == 0) self->flags |= AI_INAIR; 

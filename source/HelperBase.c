@@ -63,6 +63,13 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* charPtr) //has 
 
 	//start of character table is first player
 	uint32_t leaderNum = (charPtr[23] - 1);
+	while (heroTable[leaderNum] == 0)
+	{
+		leaderNum--;
+	}
+	// hi so uh some of you might remember my rants about how while statements are a bad idea to put in a game loop
+	// i still think i was right about that, but there is a safety net here with the first player always being allocated
+	
 	void* player = (void*)(heroTable[leaderNum]); 
 
 	vec2_t* helperPos = location__Q43scn4step4hero4HeroCFv(charPtr);
@@ -73,37 +80,27 @@ void helperLoop(helperAI_t* self, uint32_t* heroTable, uint32_t* charPtr) //has 
 	
 	vec2_t* targetPos = leaderPos;
 	if (self->target == player)
-	{	
+	{
+		resetTarget(self);
 		targetPos = checkEnemyList(self, helperPos, leaderPos, enemyManager);
 		if (targetPos != leaderPos) enemyTarget = 1;
 	}
 	else
 	{
-		bool stillHere = false;
-		uint32_t *enemyList = (uint32_t*)((uint32_t)enemyManager + 144);
-		void *enemy = 0;
-
-		for (int j = 0; j < enemyList[0]; j++)
-		{
-			enemy = *(void**)(vc_mutableArr_enemy(enemyList, j));
-			if (self->target == enemy)
-			{
-				stillHere = true;
-				break;
-			}
-		}
-
+		bool stillHere = isEntityStillHere(self, self->target, enemyManager);
 		//check if enemy still exists and if not relock onto main character
+		
 		if (stillHere)
 		{
-			targetPos = location__Q43scn4step5enemy5EnemyCFv(self->target);
+			targetPos = getTargetPosition(self); // when all this is said and done, remind me to port this project to C++
 			targetPos = checkEnemyPos(self, player, helperPos, leaderPos, targetPos);
-			if (self->target == enemy) enemyTarget = 1;
+			if (self->target_type != TARGET_PLAYER) enemyTarget = 1;
 		}
 		else 
 		{
 			self->target = player;
 			targetPos = leaderPos;
+			resetTarget(self);
 		}
 	}
 
@@ -128,8 +125,10 @@ void helperConstructor(helperAI_t* result, uint32_t heroNumber)
 	result->vpad_fp = 0;
 	result->vpad_sp = 0;
 	result->vpad_held = 0;
-	result->target_dist = 99.f;
 	
+	result->target_dist = 99.f;
+	result->prev_pos.x = 0.f;
+	result->prev_pos.y = 0.f;
 	if (heroNumber == 0) result->flags = AI_PLAYER;
 	return;
 }
@@ -146,6 +145,7 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 	uint32_t held_button = 0;
 	uint32_t fpress_button = 0;
 	uint32_t spress_button = 0;
+	bool jump = false;
 	
 	float diffX = targetPos->x - helperPos->x;
 	float diffY = targetPos->y - helperPos->y;
@@ -158,7 +158,7 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 		else if (diffX < 0.0f) { held_button = HID_BUTTON_LEFT; }
 		fpress_button = held_button;
 
-		if ((absDiffX >= helperRunDistance) && ((self->flags & AI_RUNNING) == 0))
+		if ((absDiffX >= helperRunDistance) && ((self->flags & AI_RUNNING) == 0) && ((self->flags & AI_INAIR) == 0))
 		{ 
 			self->flags |= AI_RUNNING;
 			self->run_timer = 5;
@@ -177,7 +177,6 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 			{
 				self->f_timer == 50;
 				fpress_button |= HID_BUTTON_2;
-				spress_button |= HID_BUTTON_2;
 			}
 			else if (self->flags & AI_INAIR)
 			{
@@ -194,7 +193,7 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 			}
 		}
 		
-		if ((self->flags & AI_PASSTHRU) && (diffY >= helperDetectDistance))
+		if ((self->flags & AI_PASSTHRU) && (diffY <= -helperDetectDistance))
 		{
 			held_button |= HID_BUTTON_DOWN;
 		}
@@ -221,6 +220,9 @@ void basePollInput(helperAI_t* self, vec2_t* targetPos, vec2_t* helperPos, bool 
 			}
 		}
 	}
+	
+	self->prev_pos.x = helperPos->x;
+	self->prev_pos.y = helperPos->y;
 	
 	self->vpad_held = held_button;
 	self->vpad_fp = fpress_button;

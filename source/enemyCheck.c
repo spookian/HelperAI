@@ -32,7 +32,7 @@ bool isEntityStillHere(helperAI_t* self, void* enemy, uint32_t* enemyManager)
 		case TARGET_BOSS:
 		for (int j = 0; j < bossManager[57]; j++)
 		{
-			void* chk_boss = (void*)(vc_mutableArr_boss(&bossManager[57], j));
+			void* chk_boss = *(void**)(vc_mutableArr_boss(&bossManager[57], j));
 			if (enemy == chk_boss)
 			{
 				return true;
@@ -99,9 +99,13 @@ vec2_t* checkEnemyList(helperAI_t* self, vec2_t *helperPos, vec2_t *leaderPos, v
 			idx++;
 		}
 		
-		self->target_type = TARGET_BOSS;
-		self->target = bossPtr;
-		targetPos = location__Q43scn4step4boss4BossFv(bossPtr);
+		vec2_t* bossPos = location__Q43scn4step4boss4BossFv(bossPtr);
+		if (isInRadius(helperPos, 5.0f, bossPos, (float*)&idx))
+		{
+			self->target_type = TARGET_BOSS;
+			self->target = bossPtr;
+			return bossPos;
+		}
 	}
 	
 	

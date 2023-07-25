@@ -52,6 +52,7 @@ void setupPanel(uint32_t* componentPtr, uint32_t panelNum, uint32_t charId)
 
 void checkMainAndCreateHero(uint32_t *hidPtr) //function assumes player 1
 {
+	// fucked function
 	uint32_t *heroPtr = (uint32_t*)*hidPtr;
 	uint32_t *heroManager = heroManager__Q33scn4step9ComponentFv(*(uint32_t**)heroPtr);
 
